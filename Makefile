@@ -11,6 +11,7 @@ include $(SRC)/scripts/uboot.mk
 include $(SRC)/scripts/linux.mk
 include $(SRC)/scripts/buildroot.mk
 include $(SRC)/scripts/image.mk
+include $(SRC)/scripts/flash.mk
 
 # finally, a clean rule:
 .PHONY: clean
