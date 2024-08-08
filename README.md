@@ -19,6 +19,9 @@ git clone https://github.com/niflostancu/imx-linux-builder.git
 ```
 
 Afterwards, copy the sample config file as `config.sample.mk` and set your BUILD_DEST and CROSS_COMPILE variables (mandatory!).
+In case you're wondering where you can get a cross compiler toolchain, please see
+the [ARM GNU
+toolchain](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads/).
 
 Finally, use the bundled makefile:
 ```sh
