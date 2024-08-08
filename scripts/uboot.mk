@@ -15,25 +15,7 @@ UBOOT_MKIMAGE_BIN = $(UBOOT_DIR)/tools/mkimage
 UBOOT_MAKE_FLAGS = $(_XC_ARG) -j "$(NPROC)"
 # uncomment for make script debugging
 #UBOOT_MAKE_FLAGS += V=1
-define UBOOT_EXTRA_CONFIG=
-CONFIG_SYS_SPL_MALLOC=y
-CONFIG_HAS_CUSTOM_SPL_MALLOC_START=y
-CONFIG_CUSTOM_SYS_SPL_MALLOC_ADDR=0x42200000
-CONFIG_SYS_SPL_MALLOC_SIZE=0x100000
-CONFIG_USB_GADGET_MANUFACTURER="ASS"
-CONFIG_USB_GADGET_VENDOR_NUM=0x1fc9
-CONFIG_USB_GADGET_PRODUCT_NUM=0x012b
-CONFIG_USB_FUNCTION_SDP=y
-CONFIG_SYS_BOOTM_LEN=0x6000000
-# Default Env tweaks
-CONFIG_ENV_SOURCE_FILE="$(basename $(UBOOT_ENV_SOURCE_FILE))"
-CONFIG_ENV_IS_IN_FAT=y
-CONFIG_ENV_FAT_DEVICE_AND_PART="0"
-CONFIG_ENV_IS_IN_MMC=n
-endef
-# use this patch for v2022 !!!
-#export UBOOT_EXTRA_PATCH=$(SRC)/patches/u-boot-sys-bootm-len.patch
-export UBOOT_EXTRA_CONFIG
+UBOOT_EXTRA_CONFIGS ?= $(SRC)/configs/uboot-imx8mq.config
 UBOOT_ENV_SOURCE_FILE=uboot-custom.env
 UBOOT_ENV_SOURCE_FILE_DEST=$(UBOOT_DIR)/board/technexion/pico-imx8mq/$(UBOOT_ENV_SOURCE_FILE)
 
@@ -63,9 +45,11 @@ $(UBOOT_DIR)/.config: $(UBOOT_DIR)/.extraconfig
 	$(MAKE) -C $(UBOOT_DIR) $(UBOOT_MAKE_FLAGS) pico-imx8mq_defconfig
 	cd "$(UBOOT_DIR)" && \
 		scripts/kconfig/merge_config.sh ".config" ".extraconfig"
+
 # Create extra config / patches
-$(UBOOT_DIR)/.extraconfig: $(UBOOT_DIR)/.git
-	echo "$$UBOOT_EXTRA_CONFIG" > "$@"
+$(UBOOT_DIR)/.extraconfig: $(UBOOT_EXTRA_CONFIGS) | $(UBOOT_DIR)/.git
+	echo | cat $(UBOOT_EXTRA_CONFIGS) > "$@"
+
 $(UBOOT_ENV_SOURCE_FILE_DEST): $(UBOOT_ENV_SOURCE_FILE)
 	cp -f "$<" "$@"
 
