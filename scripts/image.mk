@@ -7,6 +7,11 @@ MKIMAGE_FLAGS = SOC=$(MKIMAGE_SOC) dtbs=$(UBOOT_DTB)
 MKIMAGE_FIRMWARE_DEST = $(MKIMAGE_DIR)/$(MKIMAGE_SOC)
 MKIMAGE_OUT_FLASH_BIN = $(MKIMAGE_FIRMWARE_DEST)/flash.bin
 
+# uImage creation config
+STAGING_DIR = $(BUILD_DEST)/staging
+LINUX_UIMAGE_ITS = $(SRC)/linux-uimage.its
+LINUX_UIMAGE_OUT = linux.itb
+
 # i.MX mkimage build targets + internal vars
 _UBOOT_FILENAMES=$(notdir $(UBOOT_GENERATED_FILES))
 _FIRMWARE_FILENAMES = $(notdir $(FIRMWARE_COPY_FILES))
@@ -33,7 +38,6 @@ $(_MKIMAGE_DEPS): $(FIRMWARE_COPY_FILES_FULL) \
 
 $(MKIMAGE_OUT_FLASH_BIN): mkimage
 
-
 mkimage_clean:
 	rm -f "$(_MKIMAGE_DEPS)"
 	$(MAKE) -C $(MKIMAGE_DIR) clean 
@@ -41,3 +45,18 @@ mkimage_clean:
 .PHONY: upload_spl
 upload_spl:
 	uuu -b spl $(MKIMAGE_OUT_FLASH_BIN)
+
+.PHONY: linux_uimage
+linux_uimage:
+	$(MAKE) FORCE=1 $(STAGING_DIR)/$(LINUX_UIMAGE_OUT)
+$(STAGING_DIR)/$(LINUX_UIMAGE_OUT): $(LINUX_DIR)/$(LINUX_IMAGE_OUT) \
+		$(LINUX_DIR)/$(LINUX_DTB_OUT) $(BUILDROOT_DIR)/$(BUILDROOT_CPIO_OUT) \
+		$(LINUX_UIMAGE_ITS) | $(STAGING_DIR)/
+	cp -f $^ "$(STAGING_DIR)/"
+	cd "$(STAGING_DIR)" && \
+		"$(UBOOT_MKIMAGE_BIN)" -f "$(notdir $(LINUX_UIMAGE_ITS))" "$@" && \
+		ls -l
+
+$(STAGING_DIR)/:
+	mkdir -p "$(STAGING_DIR)"
+

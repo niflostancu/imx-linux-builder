@@ -1,0 +1,52 @@
+/dts-v1/;
+
+/ {
+    description = "ASS - Linux FIT image for Pico Pi";
+    #address-cells = <1>;
+
+    images {
+        kernel {
+            description = "Linux kernel";
+            data = /incbin/("Image");
+            type = "kernel";
+            arch = "arm64";
+            os = "linux";
+            compression = "none";
+            /* 1. Use a little offstet (e.g., 8MB) after DRAM start address */
+            load = <0x40800000>;
+            entry = <0x40800000>;
+        };
+        fdt {
+            description = "Device tree";
+            data = /incbin/("imx8mq-pico-pi.dtb");
+            type = "flat_dt";
+            arch = "arm64";
+            compression = "none";
+            /* 2. Place device tree after kernel (64MB spacing) */
+            load = <0x44800000>;
+        };
+        initrd {
+            description = "Ramdisk";
+            data = /incbin/("rootfs.cpio");
+            type = "ramdisk";
+            arch = "arm64";
+            os = "linux";
+            compression = "none";
+            /* 3. Place initramdisk last (1MB spacing) */
+            load = <0x44900000>;
+        };
+    };
+
+    configurations {
+        default = "normal-boot";
+
+        normal-boot {
+            description = "Normal boot config";
+            kernel = "kernel";
+            fdt = "fdt";
+            ramdisk = "initrd";
+        };
+    };
+};
+
+
