@@ -15,19 +15,24 @@ ALL_TARGETS ?= firmware atf uboot linux buildroot linux_uimage emmc_image
 BUILD_DEST ?= /tmp/imx8-build
 
 # Toolchain path
+ifneq ("$(USE_NATIVE_COMPILER)","")
 ifeq ("$(CROSS_COMPILE)","")
 AARCH64_TOOLCHAIN = $(firstword $(wildcard $(shell pwd)/toolchains/*aarch64-none-linux-gnu*/))
 CROSS_COMPILE := $(AARCH64_TOOLCHAIN)bin/aarch64-none-linux-gnu-
 endif
-# this can be used as argument to each make invocation
-_XC_ARG = CROSS_COMPILE=$(CROSS_COMPILE)
-$(info Using $(_XC_ARG))
 ifeq ("$(wildcard $(CROSS_COMPILE)gcc)","")
 $(error Toolchain not found! Please export CROSS_COMPILE or edit makefile!)
 endif
+endif
+# this can be used as argument to each make invocation
+_XC_ARG = CROSS_COMPILE=$(CROSS_COMPILE)
+$(info Using $(_XC_ARG))
 
 # common vars
 NPROC ?= $(shell bash -c 'expr $$(nproc) - 2')
+ifeq ("$NPROC","0")
+NPROC := 1
+endif
 
 blank :=
 define NL

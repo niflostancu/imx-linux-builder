@@ -7,7 +7,9 @@ BUILD_DEST ?= $(HOME)/tmp/imx8-build-2024
 
 # Toolchain prefix
 # FIXME: change this!
-CROSS_COMPILE=$(HOME)/.local/embedded/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+#CROSS_COMPILE=$(HOME)/.local/embedded/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+# or just use this if you're building on a native platform
+#USE_NATIVE_COMPILER=1
 
 # feel free to override the makefile variables below!
 
