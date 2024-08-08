@@ -1,26 +1,14 @@
+## Buildroot rootfs targets
 
 # Buildroot config.
 BUILDROOT_DIR = $(BUILD_DEST)/buildroot
-BUILDROOT_GIT_URL = https://github.com/buildroot/buildroot.git
+BUILDROOT_GIT_URL ?= https://github.com/buildroot/buildroot.git
+BUILDROOT_DEFCONFIG ?= defconfig
+# override this to add extra configurations
+BUILDROOT_EXTRA_CONFIGS ?= $(SRC)/configs/buildroot-default.config
+
 BUILDROOT_FLAGS = -j "$(NPROC)"
-BUILDROOT_DEFCONFIG = defconfig
 BUILDROOT_CPIO_OUT = output/images/rootfs.cpio
-define BUILDROOT_EXTRA_CONFIG=
-BR2_aarch64=y
-BR2_LINUX_KERNEL=n
-BR2_PACKAGE_FREESCALE_IMX=y
-BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y
-BR2_TARGET_ROOTFS_CPIO=y
-BR2_TARGET_ARM_TRUSTED_FIRMWARE=n
-BR2_TARGET_UBOOT=n
-BR2_PACKAGE_HOST_DOSFSTOOLS=y
-BR2_PACKAGE_HOST_MTOOLS=y
-BR2_PACKAGE_HOST_GENIMAGE=n
-BR2_PACKAGE_HOST_IMX_MKIMAGE=n
-BR2_PACKAGE_HOST_UBOOT_TOOLS=n
-BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SUPPORT=n
-endef
-export BUILDROOT_EXTRA_CONFIG
 
 .PHONY: rootfs buildroot buildroot_clean
 rootfs: buildroot
@@ -42,8 +30,8 @@ $(BUILDROOT_DIR)/.config: $(BUILDROOT_DIR)/.extraconfig
 	cd "$(BUILDROOT_DIR)" && \
 		support/kconfig/merge_config.sh ".config" ".extraconfig"
 
-$(BUILDROOT_DIR)/.extraconfig:
-	echo "$$BUILDROOT_EXTRA_CONFIG" > "$@"
+$(BUILDROOT_DIR)/.extraconfig: $(BUILDROOT_EXTRA_CONFIGS)
+	echo | cat $(BUILDROOT_EXTRA_CONFIGS) > "$@"
 
 buildroot_clean:
 	$(MAKE) $(BUILDROOT_FLAGS) -C "$(BUILDROOT_DIR)" clean
