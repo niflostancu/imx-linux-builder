@@ -1,2 +1,5 @@
+# imx-mkimage creates this in our .git directory
+mkimage_imx8
+# ignore local customizations
 config.local.mk
 

@@ -2,13 +2,13 @@
 
 # some commands require bash (esp. for the `[[ ... ]]` conditions)
 SHELL=bash
-# disable built-in rules
+# disable https://www.gnu.org/software/make/manual/html_node/Suffix-Rules.html
 .SUFFIXES:
 
 -include $(SRC)/config.local.mk
 
 # Targets to build by default
-ALL_TARGETS ?= firmware atf uboot linux buildroot image
+ALL_TARGETS ?= firmware atf uboot linux buildroot linux_uimage emmc_image
 
 # Common destination root for all build artifacts
 # (>20GB disk space required!)
@@ -28,6 +28,12 @@ endif
 
 # common vars
 NPROC ?= $(shell bash -c 'expr $$(nproc) - 2')
+
+blank :=
+define NL
+
+$(blank)
+endef
 
 all: $(ALL_TARGETS)
 
