@@ -6,6 +6,7 @@
 SRC=$(abspath .)
 
 include $(SRC)/scripts/vars.mk
+include $(SRC)/scripts/optee.mk
 include $(SRC)/scripts/firmware.mk
 include $(SRC)/scripts/uboot.mk
 include $(SRC)/scripts/linux.mk

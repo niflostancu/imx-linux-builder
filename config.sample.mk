@@ -17,6 +17,9 @@ BUILD_DEST ?= $(HOME)/tmp/imx8-build-2024
 #UBOOT_EXTRA_CONFIGS = $(SRC)/configs/uboot-imx8mq.config
 #UBOOT_DEFAULT_ENV_FILE = $(SRC)/configs/uboot-default.env
 
+# Enable OP-TEE?
+#OPTEE_ENABLED = 1
+
 # Extra Linux patch
 #LINUX_EXTRA_PATCH = $(SRC)/patches/linux-imx8mq-power-regs.patch
 

@@ -17,7 +17,8 @@ FIRMWARE_COPY_FILES_FULL = $(FIRMWARE_COPY_FILES:%=$(FIRMWARE_EXTRACT_DIR)/%)
 # ARM TrustedFirmware-A build settings
 ATF_DIR = $(BUILD_DEST)/imx-atf
 ATF_GIT_URL = https://github.com/nxp-imx/imx-atf.git
-ATF_MAKE_FLAGS = $(_XC_ARG) PLAT=imx8mq SPD=none LOG_LEVEL=40
+ATF_MAKE_FLAGS = $(_XC_ARG) PLAT=imx8mq \
+				 $(if $(OPTEE_EANBLED),$(ATF_MAKE_FLAGS_OPTEE),SPD=none)
 ATF_BIN_FILENAME = bl31.bin
 ATF_BIN_FILE_FULL = $(ATF_DIR)/build/imx8mq/release/$(ATF_BIN_FILENAME)
 
