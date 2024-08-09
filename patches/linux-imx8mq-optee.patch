@@ -1,0 +1,19 @@
+diff --git c/arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts i/arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts
+index 89cbec5c4..3f5150107 100644
+--- c/arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts
++++ i/arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts
+@@ -35,6 +35,13 @@ reg_usb_otg_vbus: regulator-usb-otg-vbus {
+ 		regulator-max-microvolt = <5000000>;
+ 		gpio = <&gpio3 14 GPIO_ACTIVE_LOW>;
+ 	};
++
++	firmware {
++		optee {
++			compatible = "linaro,optee-tz";
++			method = "smc";
++		};
++	};
+ };
+ 
+ &fec1 {
+

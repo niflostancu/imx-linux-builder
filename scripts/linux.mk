@@ -10,7 +10,9 @@ LINUX_DTS = arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts
 LINUX_IMAGE_OUT = arch/arm64/boot/Image
 LINUX_DTB_OUT = arch/arm64/boot/imx8mq-pico-pi.dtb
 LINUX_DTC_BIN = scripts/dtc/dtc
-LINUX_EXTRA_PATCH = $(SRC)/patches/linux-imx8mq-power-regs.patch
+LINUX_MODULES_PATH=$(BUILD_DEST)/linux-modules-overlay
+
+LINUX_EXTRA_PATCHES ?= $(SRC)/patches/linux-imx8mq-power-regs.patch
 
 .PHONY: linux linux_clean linux_config linux_dtb
 _LINUX_CONFIG = $(LINUX_DIR)/.config
@@ -22,18 +24,25 @@ $(LINUX_DIR)/.git:
 linux_menuconfig: $(_LINUX_CONFIG)
 	$(MAKE) $(LINUX_FLAGS) -C "$(LINUX_DIR)" menuconfig
 
-$(LINUX_DIR)/$(LINUX_IMAGE_OUT): $(_LINUX_CONFIG)
-	# patch linux board DTB with extra modifications (for power regulator)
-	if [[ -n "$(LINUX_EXTRA_PATCH)" ]]; then \
+$(LINUX_DIR)/$(LINUX_IMAGE_OUT): $(_LINUX_CONFIG) $(LINUX_EXTRA_PATCHES)
+	# patch linux kernel (optional)
+	if [[ -n "$(LINUX_EXTRA_PATCHES)" ]]; then \
 		cd "$(LINUX_DIR)/" && \
-		if ! patch -R -p1 -s -f --dry-run < "$(LINUX_EXTRA_PATCH)"; then \
-			patch -p1 < "$(LINUX_EXTRA_PATCH)" ; \
-		fi \
+		for pfile in $(LINUX_EXTRA_PATCHES); do \
+			if ! patch -R -p1 -s -f --dry-run < "$$pfile"; then \
+				patch -p1 < "$$pfile" ; \
+			fi \
+		done \
 	fi
 	$(MAKE) $(LINUX_FLAGS) -C "$(LINUX_DIR)"
 $(_LINUX_CONFIG):
 	$(MAKE) $(LINUX_FLAGS) -C "$(LINUX_DIR)" $(LINUX_CONFIG_TARGET)
 
+# create an overlay with the linux modules installed
+linux_modules:
+	mkdir -p "$(LINUX_MODULES_PATH)"
+	$(MAKE) $(LINUX_FLAGS) INSTALL_MOD_PATH="$(LINUX_MODULES_PATH)" \
+		-C "$(LINUX_DIR)" modules modules_install
 
 linux_clean:
 	$(MAKE) $(LINUX_FLAGS) -C "$(LINUX_DIR)" clean
