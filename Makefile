@@ -1,20 +1,23 @@
-################################################################################
-## Full firmware+Linux image makefile script for NXP i.MX8M-based boards
-################################################################################
+## Default entrypoint for NXP iMX firmware builder
+## Feel free to copy this Makefile and start customizing your build!
+
+# Load local (user) config (from makefile's working directory)
+-include config.local.mk
+
+# Note: make this point back to the framework path if you copy this Makefile
+MK_FRAMEWORK_SRC := .
 
 # absolute path to current (root) directory
 SRC=$(abspath .)
 
-include $(SRC)/scripts/vars.mk
-include $(SRC)/scripts/optee.mk
-include $(SRC)/scripts/firmware.mk
-include $(SRC)/scripts/uboot.mk
-include $(SRC)/scripts/linux.mk
-include $(SRC)/scripts/buildroot.mk
-include $(SRC)/scripts/image.mk
-include $(SRC)/scripts/flash.mk
+include $(MK_FRAMEWORK_SRC)/scripts/00_init.mk
+include $(MK_FRAMEWORK_SRC)/scripts/01_toolchain.mk
 
-# finally, a clean rule:
-.PHONY: clean
-clean: uboot_clean atf_clean linux_clean buildroot_clean mkimage_clean
+include $(MK_FRAMEWORK_SRC)/scripts/optee.mk
+include $(MK_FRAMEWORK_SRC)/scripts/firmware.mk
+include $(MK_FRAMEWORK_SRC)/scripts/uboot.mk
+include $(MK_FRAMEWORK_SRC)/scripts/linux.mk
+include $(MK_FRAMEWORK_SRC)/scripts/buildroot.mk
+include $(MK_FRAMEWORK_SRC)/scripts/image.mk
+include $(MK_FRAMEWORK_SRC)/scripts/flash.mk
 

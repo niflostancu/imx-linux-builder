@@ -7,7 +7,7 @@ BUILDROOT_DEFCONFIG ?= defconfig
 # override this to add extra configurations
 BUILDROOT_EXTRA_CONFIGS ?= $(SRC)/configs/buildroot-default.config
 
-BUILDROOT_FLAGS = -j "$(NPROC)"
+BUILDROOT_FLAGS = -j$(NPROC)
 BUILDROOT_CPIO_OUT = output/images/rootfs.cpio
 
 .PHONY: rootfs buildroot buildroot_clean

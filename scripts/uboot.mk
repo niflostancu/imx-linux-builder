@@ -12,7 +12,7 @@ UBOOT_GENERATED_FILES = spl/u-boot-spl.bin u-boot-nodtb.bin  \
 		  arch/arm/dts/$(UBOOT_DTB)
 UBOOT_GENERATED_FILES_FULL = $(UBOOT_GENERATED_FILES:%=$(UBOOT_DIR)/%)
 UBOOT_MKIMAGE_BIN = $(UBOOT_DIR)/tools/mkimage
-UBOOT_MAKE_FLAGS = $(_XC_ARG) -j "$(NPROC)"
+UBOOT_MAKE_FLAGS = $(_XC_ARG) -j$(NPROC)
 # uncomment for make script debugging
 #UBOOT_MAKE_FLAGS += V=1
 UBOOT_EXTRA_CONFIGS ?= $(SRC)/configs/uboot-imx8mq.config
@@ -48,7 +48,7 @@ $(UBOOT_DIR)/.config: $(UBOOT_DIR)/.extraconfig
 
 # Create extra config / patches
 $(UBOOT_DIR)/.extraconfig: $(UBOOT_EXTRA_CONFIGS) | $(UBOOT_DIR)/.git
-	echo | cat $(UBOOT_EXTRA_CONFIGS) > "$@"
+	echo | cat $(UBOOT_EXTRA_CONFIGS) - > "$@"
 
 $(UBOOT_ENV_OVERLAY_CONFIG): $(UBOOT_DEFAULT_ENV_FILE) | $(UBOOT_DIR)/.git
 	echo "$$_UBOOT_ENV_OVERLAY_" > $@

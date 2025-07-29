@@ -4,7 +4,7 @@
 LINUX_DIR = $(BUILD_DEST)/linux
 LINUX_GIT_URL = https://github.com/torvalds/linux.git
 LINUX_GIT_BRANCH = v6.6
-LINUX_FLAGS = ARCH=arm64 $(_XC_ARG) -j "$(NPROC)"
+LINUX_FLAGS = ARCH=arm64 $(_XC_ARG) -j$(NPROC)
 LINUX_CONFIG_TARGET = defconfig
 LINUX_DTS = arch/arm64/boot/dts/freescale/imx8mq-pico-pi.dts
 LINUX_IMAGE_OUT = arch/arm64/boot/Image
