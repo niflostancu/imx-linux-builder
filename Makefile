@@ -15,8 +15,8 @@ include $(MK_FRAMEWORK_SRC)/scripts/01_toolchain.mk
 include $(MK_FRAMEWORK_SRC)/scripts/10_prop_firmware.mk
 include $(MK_FRAMEWORK_SRC)/scripts/14_trusted_firmware.mk
 include $(MK_FRAMEWORK_SRC)/scripts/20_uboot.mk
+include $(MK_FRAMEWORK_SRC)/scripts/24_optee.mk
 
-include $(MK_FRAMEWORK_SRC)/scripts/optee.mk
 include $(MK_FRAMEWORK_SRC)/scripts/linux.mk
 include $(MK_FRAMEWORK_SRC)/scripts/buildroot.mk
 include $(MK_FRAMEWORK_SRC)/scripts/image.mk
