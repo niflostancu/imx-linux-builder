@@ -4,11 +4,14 @@ MKIMAGE_GIT_URL = https://github.com/nxp-imx/imx-mkimage.git
 MKIMAGE_SOC = iMX8M
 
 # op-tee integration
-MKIMAGE_OPTEE_FLAGS ?=
-MKIMAGE_OPTEE_DEPS ?= $(MKIMAGE_FIRMWARE_DEST)/.op-tee-deleted
+MKIMAGE_OPTEE_FLAGS ?= $(if $(OPTEE_ENABLED),TEE_LOAD_ADDR=$(OPTEE_TZDRAM_ADDR))
+MKIMAGE_OPTEE_DEPS ?= $(if $(OPTEE_ENABLED),\
+					  $(OPTEE_OUT_BIN),\
+					  $(MKIMAGE_FIRMWARE_DEST)/.op-tee-deleted)
 
-MKIMAGE_FLAGS = SOC=$(MKIMAGE_SOC) dtbs=$(notdir $(UBOOT_DTB_FULL)) $(MKIMAGE_OPTEE_FLAGS) \
-				CFLAGS="-O2 -Wall -std=c99"
+MKIMAGE_CFLAGS = -O2 -Wall -std=c99
+MKIMAGE_FLAGS = SOC=$(MKIMAGE_SOC) dtbs=$(notdir $(UBOOT_DTB_FULL)) \
+				$(MKIMAGE_OPTEE_FLAGS) CFLAGS="(MKIMAGE_CFLAGS)"
 MKIMAGE_FIRMWARE_DEST = $(MKIMAGE_DIR)/$(MKIMAGE_SOC)
 MKIMAGE_OUT_FLASH_BIN = $(MKIMAGE_FIRMWARE_DEST)/flash.bin
 
@@ -44,9 +47,10 @@ $(MKIMAGE_DIR)/.git:
 # dummy target which copies all required files to imx-mkimage dir
 _MKIMAGE_COPY_TMP = $(_FIRMWARE_FILENAMES) $(_UBOOT_FILENAMES) mkimage_uboot
 _MKIMAGE_COPY_FILES = $(_MKIMAGE_FILES_TMP:%=$(MKIMAGE_FIRMWARE_DEST)/%)
-_MKIMAGE_OPTEE_SCRIPT = $(if $(OPTEE_ENABLED),\
-						rm -f "$(MKIMAGE_FIRMWARE_DEST)/.op-tee-deleted" && \
-						cp -f "$(OPTEE_OUT_BIN)" "$(MKIMAGE_FIRMWARE_DEST)/tee.bin")
+_MKIMAGE_OPTEE_SCRIPT = \
+		$(if $(OPTEE_ENABLED),\
+			rm -f "$(MKIMAGE_FIRMWARE_DEST)/.op-tee-deleted" && \
+			cp -f "$(OPTEE_OUT_BIN)" "$(MKIMAGE_FIRMWARE_DEST)/tee.bin")
 $(_MKIMAGE_DEPS): $(IMX_FW_BIN_FILES_FULL) \
 		$(_UBOOT_COPY_FILES) $(ATF_BIN_FULL) \
 		$(MKIMAGE_OPTEE_DEPS) $(UBOOT_MKIMAGE_BIN) | $(MKIMAGE_DIR)/.git

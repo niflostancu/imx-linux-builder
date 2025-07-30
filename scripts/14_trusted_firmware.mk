@@ -7,8 +7,8 @@ ATF_PLATFORM ?= imx8mq
 ATF_OPTEE_FLAGS ?=
 
 # internal vars
-ATF_MAKE_FLAGS = $(_XC_ARG) PLAT=$(ATF_PLATFORM) \
-				 $(if $(OPTEE_ENABLED),$(ATF_OPTEE_FLAGS),SPD=none)
+ATF_MAKE_FLAGS ?= $(_XC_ARG) PLAT=$(ATF_PLATFORM) \
+				  $(if $(OPTEE_ENABLED),$(ATF_OPTEE_FLAGS),SPD=none)
 ATF_BIN_NAME = bl31.bin
 ATF_BIN_FULL = $(ATF_DEST)/build/$(ATF_PLATFORM)/release/$(ATF_BIN_NAME)
 
