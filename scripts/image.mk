@@ -74,6 +74,11 @@ mkimage_clean:
 	rm -f "$(_MKIMAGE_DEPS)"
 	$(MAKE) -C $(MKIMAGE_DIR) clean 
 
+.PHONY: uuu_spl upload_spl
+uuu_spl: upload_spl
+upload_spl: $(UUU)
+	$(UUU) -b spl $(MKIMAGE_OUT_FLASH_BIN)
+
 .PHONY: linux_uimage emmc_image
 linux_uimage:
 	$(MAKE) FORCE=1 $(STAGING_DIR)/$(LINUX_UIMAGE_OUT)
