@@ -15,7 +15,7 @@ BUILD_DEST ?= $(HOME)/tmp/imx8-build-2024
 # feel free to override the makefile variables below!
 
 # Custom U-Boot config & default environment
-#UBOOT_EXTRA_CONFIGS = $(SRC)/configs/uboot-imx8mq.config
+#UBOOT_EXTRA_CONFIG_FILES = $(SRC)/configs/uboot-imx8mq.config
 #UBOOT_DEFAULT_ENV_FILE = $(SRC)/configs/uboot-default.env
 
 # Enable OP-TEE?
