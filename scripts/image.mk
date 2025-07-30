@@ -31,7 +31,7 @@ export EMMC_UBOOT_ENV
 
 # i.MX mkimage build targets + internal vars
 _UBOOT_FILENAMES=$(notdir $(UBOOT_GENERATED_FILES))
-_FIRMWARE_FILENAMES = $(notdir $(FIRMWARE_COPY_FILES))
+_FIRMWARE_FILENAMES = $(notdir $(IMX_FW_BIN_FILES))
 _MKIMAGE_DEPS := $(MKIMAGE_FIRMWARE_DEST)/.mkimage-files-copied
 .PHONY: mkimage
 mkimage: $(_MKIMAGE_DEPS) $(MKIMAGE_DIR)/.git
@@ -46,8 +46,8 @@ _MKIMAGE_COPY_FILES = $(_MKIMAGE_FILES_TMP:%=$(MKIMAGE_FIRMWARE_DEST)/%)
 _MKIMAGE_OPTEE_SCRIPT = $(if $(OPTEE_ENABLED),\
 						rm -f "$(MKIMAGE_FIRMWARE_DEST)/.op-tee-deleted" && \
 						cp -f "$(OPTEE_OUT_BIN)" "$(MKIMAGE_FIRMWARE_DEST)/tee.bin")
-$(_MKIMAGE_DEPS): $(FIRMWARE_COPY_FILES_FULL) \
-		$(UBOOT_GENERATED_FILES_FULL) $(ATF_BIN_FILE_FULL) \
+$(_MKIMAGE_DEPS): $(IMX_FW_BIN_FILES_FULL) \
+		$(UBOOT_GENERATED_FILES_FULL) $(ATF_BIN_FULL) \
 		$(MKIMAGE_OPTEE_DEPS) $(UBOOT_MKIMAGE_BIN) | $(MKIMAGE_DIR)/.git
 	# copy files to the imx-mkimage/<SOC> dir
 	cp -f $(filter-out $(UBOOT_MKIMAGE_BIN),\

@@ -12,9 +12,10 @@ SRC=$(abspath .)
 
 include $(MK_FRAMEWORK_SRC)/scripts/00_init.mk
 include $(MK_FRAMEWORK_SRC)/scripts/01_toolchain.mk
+include $(MK_FRAMEWORK_SRC)/scripts/10_prop_firmware.mk
+include $(MK_FRAMEWORK_SRC)/scripts/14_trusted_firmware.mk
 
 include $(MK_FRAMEWORK_SRC)/scripts/optee.mk
-include $(MK_FRAMEWORK_SRC)/scripts/firmware.mk
 include $(MK_FRAMEWORK_SRC)/scripts/uboot.mk
 include $(MK_FRAMEWORK_SRC)/scripts/linux.mk
 include $(MK_FRAMEWORK_SRC)/scripts/buildroot.mk
