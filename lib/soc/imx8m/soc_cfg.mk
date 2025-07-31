@@ -9,7 +9,7 @@ _IMX_FW_LPDDR4_NAMES ?= \
 			lpddr4_pmu_train_2d_dmem.bin lpddr4_pmu_train_2d_imem.bin
 IMX_FW_LPDDR4 ?= $(_IMX_FW_LPDDR4_NAMES:%=$(IMX_FW_EXTRACT_DIR)/firmware/ddr/synopsys/%)
 IMX_FW_HDMI ?= $(IMX_FW_EXTRACT_DIR)/firmware/hdmi/cadence/signed_hdmi_imx8m.bin
-IMX_FW_BIN_FILES_FULL ?= $(IMX_FW_LPDDR4) $(IMX_FW_HDMI)
+IMX_FIRMWARE_FILES_FULL ?= $(IMX_FW_LPDDR4) $(IMX_FW_HDMI)
 
 # ARM Trusted Firmware for imx8m
 ATF_PLATFORM ?= imx8mX

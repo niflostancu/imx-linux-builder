@@ -20,25 +20,24 @@ IMX_MKIMAGE_OPTEE_DEPS ?= $(if $(OPTEE_ENABLED),\
 
 _IMX_UBOOT_COPY_FILES = $(UBOOT_OUT_SPL_BIN) $(UBOOT_OUT_NODTB_BIN) $(UBOOT_DTB_FULL)
 _IMX_UBOOT_FILENAMES=$(notdir $(_IMX_UBOOT_COPY_FILES))
-_FIRMWARE_FILENAMES = $(notdir $(IMX_FW_BIN_FILES))
-_IMX_MKIMAGE_DEPS := $(IMX_MKIMAGE_FIRMWARE_DEST)/.mkimage-files-copied
+_IMX_MKIMAGE_TARGET := $(IMX_MKIMAGE_FIRMWARE_DEST)/.mkimage-files-copied
 
 .PHONY: imx_mkimage
-imx_mkimage: $(_IMX_MKIMAGE_DEPS) $(IMX_MKIMAGE_DEST)/.git
+imx_mkimage: $(_IMX_MKIMAGE_TARGET) $(IMX_MKIMAGE_DEST)/.git
 	make -C $(IMX_MKIMAGE_DEST) $(IMX_MKIMAGE_FLAGS) $(IMX_MKIMAGE_MK_TARGET)
 $(IMX_MKIMAGE_OUT_FLASH_BIN): imx_mkimage
 
 $(IMX_MKIMAGE_DEST)/.git:
 	$(call mk_git_clone,$(IMX_MKIMAGE_GIT_URL),$(IMX_MKIMAGE_DEST),$(IMX_MKIMAGE_GIT_BRANCH))
 
-# dummy target which copies all required files to imx-mkimage dir
-_IMX_MKIMAGE_COPY_TMP = $(_FIRMWARE_FILENAMES) $(_IMX_UBOOT_FILENAMES) mkimage_uboot
-_IMX_MKIMAGE_COPY_FILES = $(_IMX_MKIMAGE_FILES_TMP:%=$(IMX_MKIMAGE_FIRMWARE_DEST)/%)
+# op-tee integration script
 _IMX_MKIMAGE_OPTEE_SCRIPT = \
 		$(if $(OPTEE_ENABLED),\
 			rm -f "$(IMX_MKIMAGE_FIRMWARE_DEST)/.op-tee-deleted" && \
 			cp -f "$(OPTEE_OUT_BIN)" "$(IMX_MKIMAGE_FIRMWARE_DEST)/tee.bin")
-$(_IMX_MKIMAGE_DEPS): $(IMX_FW_BIN_FILES_FULL) \
+
+# dummy target which copies all required files to imx-mkimage dir
+$(_IMX_MKIMAGE_TARGET): $(IMX_FIRMWARE_FILES_FULL) $(IMX_SENTINEL_FILES_FULL) \
 		$(_IMX_UBOOT_COPY_FILES) $(ATF_BIN_FULL) \
 		$(IMX_MKIMAGE_OPTEE_DEPS) $(UBOOT_MKIMAGE_BIN) | $(IMX_MKIMAGE_DEST)/.git
 	# copy files to the imx-mkimage/<SOC> dir
@@ -46,7 +45,6 @@ $(_IMX_MKIMAGE_DEPS): $(IMX_FW_BIN_FILES_FULL) \
 		$(filter-out %/.op-tee-deleted,$^)) "$(IMX_MKIMAGE_FIRMWARE_DEST)/"
 	# mkimage needs to be renamed to mkimage_uboot at the destination
 	cp -f "$(UBOOT_MKIMAGE_BIN)" "$(IMX_MKIMAGE_FIRMWARE_DEST)/mkimage_uboot";
-	# op-tee integration script
 	$(_IMX_MKIMAGE_OPTEE_SCRIPT)
 	touch "$@"
 	ls -l "$(IMX_MKIMAGE_FIRMWARE_DEST)"
@@ -56,7 +54,7 @@ $(IMX_MKIMAGE_FIRMWARE_DEST)/.op-tee-deleted: $(IMX_MKIMAGE_DEST)/.git
 	touch "$@"
 
 imx_mkimage_clean:
-	rm -f "$(_IMX_MKIMAGE_DEPS)"
+	rm -f "$(_IMX_MKIMAGE_TARGET)"
 	$(MAKE) -C $(IMX_MKIMAGE_DEST) clean 
 
 all: imx_mkimage

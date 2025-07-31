@@ -15,19 +15,13 @@ IMX_SENTINEL_VER ?= 0.11
 IMX_SENTINEL_BIN ?= firmware-sentinel-$(IMX_SENTINEL_VER).bin
 IMX_SENTINEL_EXTRACT_DIR ?= $(IMX_FW_DEST)/firmware-sentinel-$(IMX_SENTINEL_VER)
 
-# full path to the extracted firmware files to be included
-IMX_FW_BIN_FILES_FULL ?=
+# full path to the extracted firmware files to be included by imx-mkimage
+IMX_FIRMWARE_FILES_FULL ?=
 IMX_SENTINEL_FILES_FULL ?=
-# ... and their relative paths:
-IMX_FW_BIN_FILES ?=
-IMX_FW_BIN_FILES += \
-		$(IMX_FW_BIN_FILES_FULL:$(IMX_FW_EXTRACT_DIR)/%=%) \
-		$(IMX_SENTINEL_FILES_FULL:$(IMX_SENTINEL_EXTRACT_DIR)/%=%)
 
 # use a dummy extraction target due to multiple artifacts being produced
 _IMX_FW_EXTRACTED_TARGET = $(IMX_FW_EXTRACT_DIR)/.extracted
-$(IMX_FW_BIN_FILES_FULL): $(_IMX_FW_EXTRACTED_TARGET)
-
+$(IMX_FIRMWARE_FILES_FULL): $(_IMX_FW_EXTRACTED_TARGET)
 .PHONY: imx_fw imx_fw_clean
 # i.MX firmware download -> extract AIO rule
 imx_fw:
@@ -37,7 +31,7 @@ $(_IMX_FW_EXTRACTED_TARGET):
 	[[ -f "$(IMX_FW_DEST)/$(IMX_FW_BIN)" ]] || \
 		wget $(IMX_FW_URL) -O "$(IMX_FW_DEST)/$(IMX_FW_BIN)"
 	chmod +x "$(IMX_FW_DEST)/$(IMX_FW_BIN)"
-	[[ -f "$(firstword $(IMX_FW_BIN_FILES_FULL))" ]] || \
+	[[ -f "$(firstword $(IMX_FIRMWARE_FILES_FULL))" ]] || \
 		( cd "$(IMX_FW_DEST)" && ./$(IMX_FW_BIN) --auto-accept; )
 	# finally, create a dummy file to mark target as done
 	touch "$@"
@@ -50,7 +44,7 @@ clean_all: imx_fw_clean
 
 # i.MX Sentinel Firmware download target
 _IMX_SENTINEL_EXTRACTED_TARGET = $(IMX_SENTINEL_EXTRACT_DIR)/.extracted
-$(IMX_SENTINEL_BIN_FILES_FULL): $(_IMX_SENTINEL_EXTRACTED_TARGET)
+$(IMX_SENTINEL_FILES_FULL): $(_IMX_SENTINEL_EXTRACTED_TARGET)
 .PHONY: imx_sentinel imx_sentinel_clean
 imx_sentinel:
 	$(MAKE_FORCED) $(_IMX_SENTINEL_EXTRACTED_TARGET)
@@ -61,8 +55,8 @@ $(_IMX_SENTINEL_EXTRACTED_TARGET):
 		wget $(IMX_SENTINEL_URL) -O "$(IMX_FW_DEST)/$(IMX_SENTINEL_BIN)"
 	chmod +x "$(IMX_FW_DEST)/$(IMX_SENTINEL_BIN)"
 	# extract sentinel if not already (auto-accept license)
-	[[ -d "$(IMX_SENTINEL_EXTRACT_DIR)" ]] || ( \
-		cd "$(IMX_FW_DEST)" && ./$(IMX_SENTINEL_BIN) --auto-accept )
+	[[ -f "$(firstword $(IMX_SENTINEL_FILES_FULL))" ]] || \
+		( cd "$(IMX_FW_DEST)" && ./$(IMX_SENTINEL_BIN) --auto-accept; )
 	# finally, create a dummy file to mark target as done
 	touch "$@"
 
