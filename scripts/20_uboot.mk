@@ -36,12 +36,12 @@ endef
 
 # generated targets (files) usable through the stages:
 UBOOT_OUT_SPL_BIN = $(UBOOT_DEST)/spl/u-boot-spl.bin
-UBOOT_OUT_NODTB_IMG = $(UBOOT_DEST)/u-boot-nodtb.bin
+UBOOT_OUT_NODTB_BIN = $(UBOOT_DEST)/u-boot-nodtb.bin
 UBOOT_OUT_BIN_IMG = $(UBOOT_DEST)/u-boot.img
 UBOOT_MKIMAGE_BIN = $(UBOOT_DEST)/tools/mkimage
 
 _UBOOT_GEN_DEPS = $(UBOOT_OUT_SPL_BIN) $(UBOOT_OUT_BIN_IMG) \
-				   $(UBOOT_OUT_BIN_FIT) $(UBOOT_DTB_FULL) \
+				   $(UBOOT_OUT_NODTB_BIN) $(UBOOT_DTB_FULL) \
 				   $(UBOOT_MKIMAGE_BIN)
 
 _UBOOT_BUILD_DEPS ?=

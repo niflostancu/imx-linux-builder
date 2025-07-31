@@ -17,7 +17,7 @@ atf: $(ATF_DEST)/.git
 	$(MAKE_FORCED) $(ATF_BIN_FULL)
 $(ATF_DEST)/.git:
 	$(call mk_git_clone,$(ATF_GIT_URL),$(ATF_DEST),$(ATF_GIT_BRANCH))
-$(ATF_BIN_FULL): $(_FORCE)
+$(ATF_BIN_FULL): $(ATF_DEST)/.git $(_FORCE)
 	make -C "$(ATF_DEST)" $(ATF_MAKE_FLAGS) bl31
 
 atf_clean:
