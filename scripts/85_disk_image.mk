@@ -1,9 +1,9 @@
 # i.MX mkimage script configuration
 
 # uImage creation config
-STAGING_DIR = $(BUILD_DEST)/staging
-LINUX_UIMAGE_ITS = $(SRC)/linux-uimage.its
-LINUX_UIMAGE_OUT = linux.itb
+STAGING_DIR ?= $(BUILD_DEST)/staging
+LINUX_UIMAGE_ITS ?= linux-uimage.its
+LINUX_UIMAGE_OUT ?= linux.itb
 
 # EMMC image config
 EMMC_IMAGE_OUT = $(BUILD_DEST)/disk.img

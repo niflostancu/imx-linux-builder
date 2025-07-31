@@ -2,14 +2,11 @@
 
 # U-Boot settings (for both SPL & BL3x builds)
 UBOOT_DEST ?= $(BUILD_DEST)/u-boot
-UBOOT_GIT_URL ?= https://github.com/TechNexion/u-boot-tn-imx.git
-UBOOT_GIT_BRANCH = tn-imx_v2023.04_6.1.55_2.2.0-stable
-#UBOOT_GIT_BRANCH = tn-imx_v2022.04_5.15.71_2.2.0-stable
-#UBOOT_GIT_URL = https://github.com/nxp-imx/uboot-imx.git
-#UBOOT_GIT_BRANCH = lf_v2024.04
+UBOOT_GIT_URL ?= https://github.com/u-boot/u-boot.git
+UBOOT_GIT_BRANCH ?= master
 
-UBOOT_DEFCONFIG ?= pico-imx8mq_defconfig
-UBOOT_DEVICE_TREE ?= imx8mq-pico-pi
+UBOOT_DEFCONFIG ?= defconfig
+UBOOT_DEVICE_TREE ?= UNKNOWN_BOARD
 UBOOT_ARCH ?= arm
 # one may also specify an out-of-tree device tree (defaults in-tree ovbiously):
 UBOOT_DTB_FULL ?= $(UBOOT_DEST)/arch/$(UBOOT_ARCH)/dts/$(UBOOT_DEVICE_TREE).dtb
@@ -25,9 +22,9 @@ UBOOT_MAKE_FLAGS += $(if $(UBOOT_DEVICE_TREE),DEVICE_TREE="$(UBOOT_DEVICE_TREE)"
 UBOOT_APPLY_PATCHES ?=
 
 # u-boot config + environment overlays
-UBOOT_DEFAULT_ENV_FILE ?= $(SRC)/configs/uboot-default.env
-UBOOT_EXTRA_CONFIG_FILES ?= $(SRC)/configs/uboot-imx8mq.config
-UBOOT_EXTRA_CONFIG_TEXT ?= $(UBOOT_DEF_CONFIG_ENVFILE)
+UBOOT_EXTRA_CONFIG_FILES ?=
+UBOOT_EXTRA_CONFIG_TEXT ?= $(if (UBOOT_DEFAULT_ENV_FILE),$(UBOOT_DEF_CONFIG_ENVFILE))
+UBOOT_DEFAULT_ENV_FILE ?= 
 define UBOOT_DEF_CONFIG_ENVFILE=
 CONFIG_USE_DEFAULT_ENV_FILE=y
 CONFIG_DEFAULT_ENV_FILE="$(UBOOT_DEFAULT_ENV_FILE)"

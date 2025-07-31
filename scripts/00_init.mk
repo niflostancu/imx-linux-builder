@@ -11,7 +11,13 @@ MK_FRAMEWORK_LIB := $(MK_FRAMEWORK_DIR)/lib
 include $(MK_FRAMEWORK_LIB)/utils.mk
 include $(MK_FRAMEWORK_LIB)/build_helpers.mk
 
-# TODO: include board-specific config
+ifeq ("$(findstring boards/,$(CFG))","")
+MK_BOARD_SRC := $(abspath boards/$(CFG))
+include boards/$(CFG)/board_cfg.mk
+else
+MK_BOARD_SRC := $(abspath $(CFG))
+include $(CFG)/board_cfg.mk
+endif
 
 # some commands require bash (esp. for the `[[ ... ]]` conditions)
 SHELL=bash

@@ -7,7 +7,7 @@ BUILDROOT_GIT_BRANCH ?=
 
 BUILDROOT_DEFCONFIG ?= defconfig
 # override this to add extra configurations
-BUILDROOT_EXTRA_CONFIG_FILES ?= $(SRC)/configs/buildroot-default.config
+BUILDROOT_EXTRA_CONFIG_FILES ?=
 BUILDROOT_EXTRA_CONFIG_TEXT ?=
 
 BUILDROOT_MAKE_ARGS ?= -j$(NPROC)

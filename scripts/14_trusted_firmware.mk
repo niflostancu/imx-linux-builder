@@ -3,7 +3,7 @@
 ATF_DEST ?= $(BUILD_DEST)/atf
 ATF_GIT_URL ?= https://github.com/nxp-imx/imx-atf.git
 ATF_GIT_BRANCH ?=
-ATF_PLATFORM ?= imx8mq
+ATF_PLATFORM ?= UNKNOWN_PLATFORM
 ATF_OPTEE_FLAGS ?=
 
 # internal vars

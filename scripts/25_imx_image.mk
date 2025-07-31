@@ -4,7 +4,7 @@ IMX_MKIMAGE_DEST ?= $(BUILD_DEST)/imx-mkimage
 IMX_MKIMAGE_GIT_URL ?= https://github.com/nxp-imx/imx-mkimage.git
 IMX_MKIMAGE_BRANCH ?=
 
-IMX_MKIMAGE_SOC ?= iMX8M
+IMX_MKIMAGE_SOC ?= UNKNOWN_IMX_SOC
 IMX_MKIMAGE_MK_TARGET ?= flash_evk
 IMX_MKIMAGE_CFLAGS ?= -O2 -Wall -std=c99
 IMX_MKIMAGE_FLAGS ?= SOC=$(IMX_MKIMAGE_SOC) dtbs=$(notdir $(UBOOT_DTB_FULL)) \

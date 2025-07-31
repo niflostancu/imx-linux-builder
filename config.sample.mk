@@ -3,7 +3,7 @@
 # Common destination root for all build artifacts
 # (>20GB disk space required!)
 # FIXME: change this!
-BUILD_DEST ?= $(HOME)/tmp/imx8-build-2024
+#BUILD_DEST ?= $(HOME)/tmp/arm-builder/$(notdir $(CFG))
 
 # Toolchain prefix
 # FIXME: change this!
@@ -14,15 +14,18 @@ BUILD_DEST ?= $(HOME)/tmp/imx8-build-2024
 
 # feel free to override the makefile variables below!
 
+# default board configuration name (overridable using `make CFG=myboard ...`)
+#CFG ?= imx8m/tn-pico-pi-imx8mq
+
 # Custom U-Boot config & default environment
-#UBOOT_EXTRA_CONFIG_FILES = $(SRC)/configs/uboot-imx8mq.config
-#UBOOT_DEFAULT_ENV_FILE = $(SRC)/configs/uboot-default.env
+#UBOOT_EXTRA_CONFIG_FILES = $(SRC)/configs/uboot-custom.config
+#UBOOT_DEFAULT_ENV_FILE = $(SRC)/configs/uboot-custom.env
 
 # Enable OP-TEE?
 #OPTEE_ENABLED = 1
 
 # Extra Linux patch
-#KERNEL_APPLY_PATCHES = $(SRC)/patches/linux-imx8mq-power-regs.patch
+#KERNEL_APPLY_PATCHES = $(SRC)/patches/my-modifications.patch
 
 # custom buildroot configs / overlays (examples / uncomment)
 #BUILDROOT_ADD_LINUX_MODULES = 1

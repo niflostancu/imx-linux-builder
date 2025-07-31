@@ -1,7 +1,5 @@
 ## Linux kernel build targets
 
-SOC_ARCH ?= arm64
-
 # Linux Kernel
 KERNEL_DEST ?= $(BUILD_DEST)/linux
 KERNEL_GIT_URL ?= https://github.com/torvalds/linux.git
@@ -9,17 +7,18 @@ KERNEL_GIT_BRANCH ?= v6.6
 KERNEL_GIT_SHALLOW ?= 1
 
 # kernel configuration & device tree options
+KERNEL_ARCH ?= $(SOC_ARCH)
 KERNEL_DEFCONFIG ?= defconfig
 KERNEL_CONFIG_FRAGMENTS ?=
-KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx8mq-pico-pi.dts
+KERNEL_DTS ?= arch/$(KERNEL_ARCH)/boot/dts/UNKNOWN.dts
 # copy external (board-specific) kernel device trees to source
 KERNEL_COPY_DTS ?=
 
 # Linux kernel make
-KERNEL_MAKE_ARGS ?= ARCH=$(SOC_ARCH) $(_XC_ARG) -j$(NPROC)
+KERNEL_MAKE_ARGS ?= ARCH=$(KERNEL_ARCH) $(_XC_ARG) -j$(NPROC)
 KERNEL_APPLY_PATCHES ?=
 
-KERNEL_OUT_IMAGE ?= $(KERNEL_DEST)/arch/$(SOC_ARCH)/boot/Image
+KERNEL_OUT_IMAGE ?= $(KERNEL_DEST)/arch/$(KERNEL_ARCH)/boot/Image
 KERNEL_OUT_DTB ?= $(KERNEL_DEST)/$(KERNEL_DTS:%.dts=%.dtb)
 KERNEL_DTC_BIN ?= scripts/dtc/dtc
 KERNEL_MODULES_INSTALL=$(BUILD_DEST)/linux-modules-overlay
