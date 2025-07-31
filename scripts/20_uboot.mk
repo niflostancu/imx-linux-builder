@@ -12,6 +12,7 @@ UBOOT_ARCH ?= arm
 UBOOT_DTB_FULL ?= $(UBOOT_DEST)/arch/$(UBOOT_ARCH)/dts/$(UBOOT_DEVICE_TREE).dtb
 # copy external (board-specific) device tree to in-tree source?
 UBOOT_COPY_DTS ?=
+UBOOT_COPY_FILES ?=
 
 UBOOT_CFLAGS ?=
 UBOOT_MAKE_FLAGS ?= $(_XC_ARG) -j$(NPROC) KCFLAGS="$(UBOOT_CFLAGS)"
@@ -59,6 +60,15 @@ $(_UBOOT_DTS_DEST): $(UBOOT_COPY_DTS)
 	cp -f "$<" "$@"
 _UBOOT_BUILD_DEPS += $(_UBOOT_DTS_DEST)
 endif
+
+_UBOOT_COPY_FILENAMES := $(notdir $(UBOOT_COPY_FILES))
+_UBOOT_COPY_FILES_DEST := $(_UBOOT_COPY_FILENAMES:%=$(UBOOT_DEST)/%)
+_UBOOT_BUILD_DEPS += $(_UBOOT_COPY_FILES_DEST)
+_UBOOT_COPY_TARGET := $(UBOOT_DEST)/.uboot-files-copied
+$(_UBOOT_COPY_TARGET): $(UBOOT_COPY_FILES)
+	cp -f $^ "$(UBOOT_DEST)/"
+	touch "$@"
+$(_UBOOT_COPY_FILES_DEST): $(_UBOOT_COPY_TARGET)
 
 $(_UBOOT_COMPILED_GUARD): $(_UBOOT_BUILD_DEPS) $(_FORCE)
 	$(foreach patchfile,$(UBOOT_APPLY_PATCHES),\
