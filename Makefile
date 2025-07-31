@@ -19,6 +19,6 @@ include $(MK_FRAMEWORK_SRC)/scripts/20_uboot.mk
 include $(MK_FRAMEWORK_SRC)/scripts/24_optee.mk
 include $(MK_FRAMEWORK_SRC)/scripts/25_imx_image.mk
 include $(MK_FRAMEWORK_SRC)/scripts/32_kernel.mk
-include $(MK_FRAMEWORK_SRC)/scripts/buildroot.mk
+include $(MK_FRAMEWORK_SRC)/scripts/42_buildroot.mk
 include $(MK_FRAMEWORK_SRC)/scripts/85_disk_image.mk
 
