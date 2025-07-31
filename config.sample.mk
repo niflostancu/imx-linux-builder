@@ -22,7 +22,7 @@ BUILD_DEST ?= $(HOME)/tmp/imx8-build-2024
 #OPTEE_ENABLED = 1
 
 # Extra Linux patch
-#LINUX_EXTRA_PATCH = $(SRC)/patches/linux-imx8mq-power-regs.patch
+#KERNEL_APPLY_PATCHES = $(SRC)/patches/linux-imx8mq-power-regs.patch
 
 # custom buildroot configs / overlays (examples / uncomment)
 #BUILDROOT_ADD_LINUX_MODULES = 1
