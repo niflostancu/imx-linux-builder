@@ -34,16 +34,18 @@ endef
 
 # generated targets (files) usable through the stages:
 UBOOT_OUT_SPL_BIN = $(UBOOT_DEST)/spl/u-boot-spl.bin
+UBOOT_OUT_BIN = $(UBOOT_DEST)/u-boot.bin
 UBOOT_OUT_NODTB_BIN = $(UBOOT_DEST)/u-boot-nodtb.bin
 UBOOT_OUT_BIN_IMG = $(UBOOT_DEST)/u-boot.img
 UBOOT_MKIMAGE_BIN = $(UBOOT_DEST)/tools/mkimage
 
 _UBOOT_GEN_DEPS = $(UBOOT_OUT_SPL_BIN) $(UBOOT_OUT_BIN_IMG) \
-				   $(UBOOT_OUT_NODTB_BIN) $(UBOOT_DTB_FULL) \
+				   $(UBOOT_OUT_NODTB_BIN) $(UBOOT_OUT_BIN) $(UBOOT_DTB_FULL) \
 				   $(UBOOT_MKIMAGE_BIN)
 
+_UBOOT_PATCH_TARGET ?= $(UBOOT_DEST)/.patches-applied
 _UBOOT_BUILD_DEPS ?=
-_UBOOT_BUILD_DEPS += $(UBOOT_DEST)/.config $(UBOOT_APPLY_PATCHES)
+_UBOOT_BUILD_DEPS += $(UBOOT_DEST)/.config $(_UBOOT_PATCH_TARGET)
 _UBOOT_COMPILED_GUARD = $(UBOOT_DEST)/.uboot-compiled
 
 .PHONY: uboot uboot_clean
@@ -70,16 +72,19 @@ $(_UBOOT_COPY_TARGET): $(UBOOT_COPY_FILES)
 	touch "$@"
 $(_UBOOT_COPY_FILES_DEST): $(_UBOOT_COPY_TARGET)
 
-$(_UBOOT_COMPILED_GUARD): $(_UBOOT_BUILD_DEPS) $(_FORCE)
+$(_UBOOT_PATCH_TARGET): $(UBOOT_APPLY_PATCHES) | $(UBOOT_DEST)/.git
 	$(foreach patchfile,$(UBOOT_APPLY_PATCHES),\
 		$(call mk_apply_patch,$(patchfile),$(UBOOT_DEST)))
+	touch "$@"
+
+$(_UBOOT_COMPILED_GUARD): $(_UBOOT_BUILD_DEPS) $(_FORCE)
 	$(MAKE) -C $(UBOOT_DEST) $(UBOOT_MAKE_FLAGS)
 	touch "$@"
 # generated files:
 $(_UBOOT_GEN_DEPS): $(_UBOOT_COMPILED_GUARD)
 
 # merge with the makefile-supplied .extraconfig
-$(UBOOT_DEST)/.config: | $(UBOOT_DEST)/.extraconfig
+$(UBOOT_DEST)/.config: $(_UBOOT_BUILD_DEPS) | $(UBOOT_DEST)/.extraconfig
 	$(MAKE) -C $(UBOOT_DEST) $(UBOOT_MAKE_FLAGS) $(UBOOT_DEFCONFIG)
 	cd "$(UBOOT_DEST)" && \
 		scripts/kconfig/merge_config.sh ".config" ".extraconfig"
