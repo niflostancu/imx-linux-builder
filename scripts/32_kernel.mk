@@ -3,7 +3,7 @@
 # Linux Kernel
 KERNEL_DEST ?= $(BUILD_DEST)/linux
 KERNEL_GIT_URL ?= https://github.com/torvalds/linux.git
-KERNEL_GIT_BRANCH ?= v6.6
+KERNEL_GIT_BRANCH ?= v6.12
 KERNEL_GIT_SHALLOW ?= 1
 
 # kernel configuration & device tree options

@@ -27,6 +27,7 @@ OPTEE_TOTAL_SIZE ?= 0x02400000
 OPTEE_DDR_SIZE = 0x80000000
 
 # Use Linux mainline
+KERNEL_GIT_BRANCH ?= v6.6
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx8mq-pico-pi.dts
 LINUX_UIMAGE_ITS ?= $(MK_BOARD_SRC)/linux-uimage.its
 # apply some patches...
