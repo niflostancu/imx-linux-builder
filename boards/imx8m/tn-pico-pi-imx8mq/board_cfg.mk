@@ -42,6 +42,6 @@ BUILDROOT_EXTRA_CONFIG_FILES += \
 # Image options
 EMMC_IMAGE_SIZE = 256M
 
-# Load RV1106 SoC defaults
+# Load SoC defaults
 MK_SOC_DIR := $(MK_FRAMEWORK_LIB)/soc/$(IMX_SOC)
 include $(MK_SOC_DIR)/soc_cfg.mk

@@ -32,6 +32,6 @@ endif
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx93-11x11-evk.dts
 #LINUX_UIMAGE_ITS ?= $(MK_BOARD_SRC)/linux-uimage.its
 
-# Load RV1106 SoC defaults
+# Load SoC defaults
 MK_SOC_DIR := $(MK_FRAMEWORK_LIB)/soc/$(IMX_SOC)
 include $(MK_SOC_DIR)/soc_cfg.mk
