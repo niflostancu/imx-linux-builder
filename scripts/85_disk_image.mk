@@ -10,7 +10,7 @@ EMMC_IMAGE_OUT = $(BUILD_DEST)/disk.img
 EMMC_IMAGE_SIZE ?= 128M
 # Default partitioning script (fdisk syntax)
 # Start sector = 10MB / 512b = 10*1024^2/512 = 20480
-EMMC_FDISK_SCRIPT ?= d$(nl)n$(nl)p$(nl)1$(nl)20480$(nl)$(nl)p$(nl)w$(nl)
+EMMC_FDISK_SCRIPT ?= d$(nl)n$(nl)p$(nl)1$(nl)20480$(nl)$(nl)a$(nl)p$(nl)w$(nl)
 # optional contents for the uboot.env file (will be created on mmc boot part)
 EMMC_UBOOT_ENV?=
 
