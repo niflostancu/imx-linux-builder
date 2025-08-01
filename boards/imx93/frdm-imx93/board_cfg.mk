@@ -30,7 +30,10 @@ endif
 
 # Use Linux mainline
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx93-11x11-evk.dts
-#LINUX_UIMAGE_ITS ?= $(MK_BOARD_SRC)/linux-uimage.its
+LINUX_UIMAGE_ITS ?= $(MK_BOARD_SRC)/linux-uimage.its
+
+# Buildroot config
+BUILDROOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/buildroot/default.config
 
 # Load SoC defaults
 MK_SOC_DIR := $(MK_FRAMEWORK_LIB)/soc/$(IMX_SOC)

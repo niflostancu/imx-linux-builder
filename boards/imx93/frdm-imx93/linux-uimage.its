@@ -1,7 +1,7 @@
 /dts-v1/;
 
 / {
-    description = "Linux FIT image for TN Pico Pi iMX8mq";
+    description = "Linux FIT image for FRDM IMX93";
     #address-cells = <1>;
 
     images {
@@ -13,17 +13,17 @@
             os = "linux";
             compression = "none";
             /* 1. Use a little offstet (e.g., 8MB) after DRAM start address */
-            load = <0x40800000>;
-            entry = <0x40800000>;
+            load = <0x80800000>;
+            entry = <0x80800000>;
         };
         fdt {
             description = "Device tree";
-            data = /incbin/("imx8mq-pico-pi.dtb");
+            data = /incbin/("imx93-11x11-evk.dtb");
             type = "flat_dt";
             arch = "arm64";
             compression = "none";
             /* 2. Place device tree after kernel (64MB spacing) */
-            load = <0x44800000>;
+            load = <0x84800000>;
         };
         initrd {
             description = "Ramdisk";
@@ -33,7 +33,7 @@
             os = "linux";
             compression = "none";
             /* 3. Place initramdisk last (1MB spacing) */
-            load = <0x44900000>;
+            load = <0x84900000>;
         };
     };
 
