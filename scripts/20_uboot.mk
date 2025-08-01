@@ -48,7 +48,7 @@ _UBOOT_BUILD_DEPS ?=
 _UBOOT_BUILD_DEPS += $(UBOOT_DEST)/.config $(_UBOOT_PATCH_TARGET)
 _UBOOT_COMPILED_GUARD = $(UBOOT_DEST)/.uboot-compiled
 
-.PHONY: uboot uboot_clean
+.PHONY: uboot
 uboot: $(UBOOT_DEST)/.git
 	$(MAKE_FORCED) $(_UBOOT_COMPILED_GUARD)
 
@@ -98,10 +98,13 @@ export _UBOOT_CONFIG_OVERLAY_=$(UBOOT_EXTRA_CONFIG_TEXT)
 uboot_menuconfig:
 	$(MAKE) -C $(UBOOT_DEST) $(UBOOT_MAKE_FLAGS) menuconfig
 
+.PHONY: uboot_clean uboot_cleanconfig
 uboot_clean:
 	rm -f "$(_UBOOT_COMPILED_GUARD)"
 	rm -f "$(UBOOT_DEST)/.extraconfig"
 	$(MAKE) -C $(UBOOT_DEST) clean 
+uboot_cleanconfig:
+	rm -f $(UBOOT_DEST)/.config $(UBOOT_DEST)/.extraconfig
 
 all: uboot
 clean_all: uboot_clean
