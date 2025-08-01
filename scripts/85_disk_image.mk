@@ -56,3 +56,8 @@ export _EMMC_IMAGE_FDISK_SCRIPT_=$(EMMC_FDISK_SCRIPT)
 export _EMMC_UBOOT_ENV_CONTENTS_=$(EMMC_UBOOT_ENV)
 
 all: emmc_image
+
+.PHONY: imx_upload_emmc
+imx_upload_emmc: $(UUU)
+	$(UUU) -b emmc_all $(IMX_OUT_FLASH_BIN) $(EMMC_IMAGE_OUT)
+
