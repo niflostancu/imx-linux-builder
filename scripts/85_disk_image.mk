@@ -33,7 +33,7 @@ $(STAGING_DIR)/:
 # Target to generate emmc disk image
 _EMMC_DISK_IMG = $(EMMC_IMAGE_OUT)
 # Start sector = 10MB / 512b = 10*1024^2/512 = 20480
-_EMMC_IMAGE_FDISK_SCRIPT=d$(NL)n$(NL)p$(NL)1$(NL)20480$(NL)$(NL)p$(NL)w$(NL)
+_EMMC_IMAGE_FDISK_SCRIPT=d$(nl)n$(nl)p$(nl)1$(nl)20480$(nl)$(nl)p$(nl)w$(nl)
 export _EMMC_IMAGE_FDISK_SCRIPT
 emmc_image:
 	$(MAKE) FORCE=1 $(_EMMC_DISK_IMG)
