@@ -2,4 +2,5 @@
 mkimage_imx8
 # ignore local customizations
 config.local.mk
+config.local/
 
