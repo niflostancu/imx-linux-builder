@@ -29,11 +29,18 @@ OPTEE_DDR_SIZE = 0x80000000
 # Use Linux mainline
 KERNEL_GIT_BRANCH ?= v6.6
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx8mq-pico-pi.dts
-LINUX_UIMAGE_ITS ?= $(MK_BOARD_SRC)/linux-uimage.its
 # apply some patches...
 KERNEL_APPLY_PATCHES = \
 		$(MK_BOARD_SRC)/linux/imx8mq-power-regs.patch \
 		$(MK_BOARD_SRC)/linux/imx8mq-optee.patch
+
+# Use the Linux FIT image generator snippet
+GEN_LINUX_FIT_KERNEL_LOAD ?= 0x40800000
+GEN_LINUX_FIT_FDT_LOAD ?= 0x44800000
+GEN_LINUX_FIT_INITRD_LOAD ?= 0x44900000
+GEN_LINUX_FIT_INITRD_ENABLED ?= 1
+# uncomment to use the bundled FIT
+#LINUX_UIMAGE_ITS ?= $(MK_BOARD_SRC)/linux-uimage.its
 
 # Buildroot config
 BUILDROOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/buildroot/default.config

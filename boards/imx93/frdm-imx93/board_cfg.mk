@@ -30,7 +30,12 @@ UBOOT_DEFAULT_ENV_FILE ?= $(MK_BOARD_SRC)/uboot/default.env
 
 # Use Linux mainline
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx93-11x11-evk.dts
-LINUX_UIMAGE_ITS ?= $(MK_BOARD_SRC)/linux-uimage.its
+
+# Use the Linux FIT image generator snippet
+#GEN_LINUX_FIT_INITRD_ENABLED ?= 1
+GEN_LINUX_FIT_KERNEL_LOAD ?= 0x81000000
+GEN_LINUX_FIT_FDT_LOAD ?= 0x8E000000
+GEN_LINUX_FIT_INITRD_LOAD ?= 0x90000000
 
 # Buildroot config
 BUILDROOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/buildroot/default.config

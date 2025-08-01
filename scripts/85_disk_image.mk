@@ -1,10 +1,5 @@
 # i.MX mkimage script configuration
 
-# uImage creation config
-STAGING_DEST ?= $(BUILD_DEST)/staging
-LINUX_UIMAGE_ITS ?= linux-uimage.its
-LINUX_UIMAGE_OUT ?= $(STAGING_DEST)/linux.itb
-
 # EMMC image config
 EMMC_IMAGE_OUT = $(BUILD_DEST)/disk.img
 EMMC_IMAGE_SIZE ?= 128M
@@ -15,20 +10,7 @@ EMMC_FDISK_SCRIPT ?= d$(nl)n$(nl)p$(nl)1$(nl)20480$(nl)$(nl)a$(nl)p$(nl)w$(nl)
 EMMC_UBOOT_ENV?=
 
 
-.PHONY: linux_uimage emmc_image
-linux_uimage:
-	$(MAKE_FORCED) $(LINUX_UIMAGE_OUT)
-$(LINUX_UIMAGE_OUT): $(KERNEL_OUT_IMAGE) $(KERNEL_OUT_DTB) \
-		$(BUILDROOT_OUT_CPIO) $(LINUX_UIMAGE_ITS) | $(STAGING_DEST)/
-	cp -f $^ "$(STAGING_DEST)/"
-	cd "$(STAGING_DEST)" && \
-		"$(UBOOT_MKIMAGE_BIN)" -f "$(notdir $(LINUX_UIMAGE_ITS))" "$@" && \
-		ls -l
-
-$(STAGING_DEST)/:
-	mkdir -p "$(STAGING_DEST)"
-
-# target to generate emmc disk image
+.PHONY: emmc_image
 emmc_image:
 	$(MAKE_FORCED) $(EMMC_IMAGE_OUT)
 $(EMMC_IMAGE_OUT): $(LINUX_UIMAGE_OUT) $(IMX_MKIMAGE_OUT_FLASH_BIN) \
