@@ -2,7 +2,9 @@
 
 # uImage creation config
 STAGING_DEST ?= $(BUILD_DEST)/staging
-LINUX_UIMAGE_OUT ?= $(STAGING_DEST)/$(notdir $(LINUX_UIMAGE_ITS)).itb
+
+_LINUX_UIMAGE_NAME ?= $(notdir $(LINUX_UIMAGE_ITS))
+LINUX_UIMAGE_OUT ?= $(STAGING_DEST)/$(_LINUX_UIMAGE_NAME:%.its=%.itb)
 
 # default to using a generated ITS file:
 LINUX_UIMAGE_ITS ?= $(GEN_LINUX_FIT_OUT_ITS)
