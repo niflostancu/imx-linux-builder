@@ -41,6 +41,11 @@ BUILDROOT_EXTRA_CONFIG_FILES += \
 
 # Image options
 EMMC_IMAGE_SIZE = 256M
+define EMMC_UBOOT_ENV=
+bootargs=console=ttymxc0,115200 init=/sbin/init
+loadaddr=0x70000000
+mmcboot=echo Booting...; load mmc 0:1 $${loadaddr} linux.itb; bootm $${loadaddr}
+endef
 
 # Load SoC defaults
 MK_SOC_DIR := $(MK_FRAMEWORK_LIB)/soc/$(IMX_SOC)
