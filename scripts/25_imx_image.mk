@@ -68,7 +68,7 @@ all: imx_mkimage
 clean_all: imx_mkimage_clean
 
 # iMX SPL image bootloader upload target 
-.PHONY: imx_upload_spl
-imx_upload_spl: $(UUU)
+.PHONY: uuu_spl
+uuu_spl: $(UUU)
 	$(UUU) -b spl $(IMX_OUT_FLASH_BIN)
 

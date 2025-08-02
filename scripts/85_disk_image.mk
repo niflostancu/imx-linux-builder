@@ -1,45 +1,87 @@
 # i.MX mkimage script configuration
 
-# EMMC image config
-EMMC_IMAGE_OUT = $(BUILD_DEST)/disk.img
-EMMC_IMAGE_SIZE ?= 128M
-# Default partitioning script (fdisk syntax)
-# Start sector = 10MB / 512b = 10*1024^2/512 = 20480
-EMMC_FDISK_SCRIPT ?= d$(nl)n$(nl)p$(nl)1$(nl)20480$(nl)$(nl)a$(nl)p$(nl)w$(nl)
-# optional contents for the uboot.env file (will be created on mmc boot part)
-EMMC_UBOOT_ENV?=
+# load disk partitioning macros
+include $(MK_FRAMEWORK_LIB)/snippets/disk_partitioning.mk
 
+# EMMC & SD card image default configs
+DISKIMG_OUT_SD = $(BUILD_DEST)/emmc.img
+DISKIMG_OUT_EMMC = $(BUILD_DEST)/sdcard.img
+DISKIMG_SIZE_SD ?= 128M
+DISKIMG_SIZE_EMMC ?= $(DISKIMG_SIZE_SD)
+# Partitioning scheme to use
+DISKIMG_PART_SCHEME ?= FDISK
+DISKIMG_PART_SCRIPT_SD ?= $(PART_FDISK_1P_BOOT_FULL)
+DISKIMG_PART_SCRIPT_EMMC ?= $(DISKIMG_PART_SCRIPT_SD)
+# optional contents for the uboot.env file (will be created on boot part)
+DISKIMG_UBOOT_ENV_SD ?=
+DISKIMG_UBOOT_ENV_EMMC ?=
+# boot image offset (in 512B sectors) to be written at
+DISKIMG_BOOT_SECTOR_SD ?= 2
+DISKIMG_BOOT_SECTOR_EMMC ?= $(DISKIMG_BOOT_SECTOR_SD)
 
-.PHONY: emmc_image
+# Temporary mountpoint to use
+DISKIMG_TMP_MOUNTPOINT ?= /tmp/mnt
+
+# Internal/computed vars
+_DSKIMG_OUT ?= $(DISKIMG_OUT_$(img_type))
+_DSKIMG_SIZE ?= $(DISKIMG_SIZE_$(img_type))
+_DSKIMG_BOOT_SECTOR ?= $(DISKIMG_BOOT_SECTOR_$(img_type))
+_DSKIMG_PART_MACRO ?= $(PART_MACRO_$(DISKIMG_PART_SCHEME))
+_DSKIMG_PART_SCR_VAR ?= _DSKIMG_PART_SCRIPT_$(img_type)_
+_DSKIMG_UBOOT_ENV_VAR ?= _DSKIMG_UBOOT_ENV_$(img_type)_
+
+define DISKIMG_SCR_FULL?=
+$(call disk_image_create,$(_DSKIMG_SIZE),$(_DSKIMG_OUT))
+$(call $(_DSKIMG_PART_MACRO),$(_DSKIMG_PART_SCR_VAR),$(_DSKIMG_OUT))
+$(call disk_lodev_attach,$(_DSKIMG_OUT))
+# begin default disk image script:
+MNT=$(DISKIMG_TMP_MOUNTPOINT)
+mkdir -p "$$MNT"
+$(_DSKIMG_SCR_PART1)
+# END disk image script!
+$(disk_lodev_cleanup)
+endef
+# inner script: first (boot) partition
+define _DSKIMG_SCR_PART1 ?=
+$(MKFS_FAT32) $${LOOP_DEV}p1
+$(MOUNT) "$${LOOP_DEV}p1" $$MNT
+$(SUDO) cp "$(LINUX_UIMAGE_OUT)" $$MNT/
+echo "$$$$(_DSKIMG_UBOOT_ENV_VAR)" | $(SUDO) tee $$MNT/uboot.env
+ls -lh $$MNT
+endef
+define _DSKIMG_WRITE_BOOT_SCRIPT ?=
+dd if="$(IMX_OUT_FLASH_BIN)" of="$$LOOP_DEV" bs=512 seek=$(_DSKIMG_BOOT_SECTOR)
+endef
+
+# SD & eMMC card image targets
+.PHONY: emmc_image sd_image
 emmc_image:
-	$(MAKE_FORCED) $(EMMC_IMAGE_OUT)
-$(EMMC_IMAGE_OUT): $(LINUX_UIMAGE_OUT) $(IMX_MKIMAGE_OUT_FLASH_BIN) \
+	$(MAKE_FORCED) $(DISKIMG_OUT_EMMC)
+$(DISKIMG_OUT_EMMC): $(LINUX_UIMAGE_OUT) $(IMX_OUT_FLASH_BIN) \
 		$(_FORCE) | $(STAGING_DEST)/
-	truncate --size $(EMMC_IMAGE_SIZE) $(EMMC_IMAGE_OUT)
-	echo "$$_EMMC_IMAGE_FDISK_SCRIPT_"
-	echo "$$_EMMC_IMAGE_FDISK_SCRIPT_" | fdisk $(EMMC_IMAGE_OUT)
-	sudo partx -a "$(EMMC_IMAGE_OUT)"
-	_XPART=$$(ls -1 /dev/loop*p1 | head -1); \
-	_LDEV=$${_XPART%p1}; \
-	( \
-		sudo mkfs.fat -F 32 "$$_XPART"; \
-		sudo mount "$$_XPART" /mnt; \
-		sudo cp "$(LINUX_UIMAGE_OUT)" /mnt/; \
-		echo "$$_EMMC_UBOOT_ENV_CONTENTS_" | sudo tee /mnt/uboot.env; \
-		ls -lh /mnt; \
-		sudo umount "$$_XPART"; \
-		dd if="$(IMX_MKIMAGE_OUT_FLASH_BIN)" of="$$_LDEV" bs=1024 seek=33 \
-	) || true; \
-		sudo umount "$$_XPART"; \
-		sudo partx -d "$(EMMC_IMAGE_OUT)"; \
-		sudo losetup -D $$_LDEV
+	bash -x -c "$$_DSKIMG_SH_SCRIPT_FULL_EMMC_"
+sd_image:
+	$(MAKE_FORCED) $(DISKIMG_OUT_SD)
+$(DISKIMG_OUT_SD): $(LINUX_UIMAGE_OUT) $(IMX_OUT_FLASH_BIN) \
+		$(_FORCE) | $(STAGING_DEST)/
+	bash -x -c "$$_DSKIMG_SH_SCRIPT_FULL_SD_"
+# export some makefile vars for bash usage:
+export _DSKIMG_SH_SCRIPT_FULL_SD_=$(let img_type,SD,$(DISKIMG_SCR_FULL))
+export _DSKIMG_SH_SCRIPT_FULL_EMMC_=$(let img_type,EMMC,$(DISKIMG_SCR_FULL))
+export _DSKIMG_PART_SCRIPT_SD_=$(let img_type,SD,$(DISKIMG_PART_SCRIPT_SD))
+export _DSKIMG_PART_SCRIPT_EMMC_=$(let img_type,EMMC,$(DISKIMG_PART_SCRIPT_EMMC))
+export _DSKIMG_UBOOT_ENV_SD_=$(let img_type,SD,$(DISKIMG_UBOOT_ENV_SD))
+export _DSKIMG_UBOOT_ENV_EMMC_=$(let img_type,EMMC,$(DISKIMG_UBOOT_ENV_EMMC))
 
-export _EMMC_IMAGE_FDISK_SCRIPT_=$(EMMC_FDISK_SCRIPT)
-export _EMMC_UBOOT_ENV_CONTENTS_=$(EMMC_UBOOT_ENV)
+.PHONY: uuu_emmc
+uuu_emmc: $(DISKIMG_OUT_EMMC) | $(UUU)
+	$(UUU) -b emmc_all $(IMX_OUT_FLASH_BIN) $(DISKIMG_OUT_EMMC)
 
-all: emmc_image
-
-.PHONY: imx_upload_emmc
-imx_upload_emmc: $(UUU)
-	$(UUU) -b emmc_all $(IMX_OUT_FLASH_BIN) $(EMMC_IMAGE_OUT)
+.PHONY: dd_sd
+SD_DEV ?= 
+dd_sd: $(DISKIMG_OUT_SD)
+	@if [ -z "$(SD_DEV)" ]; then \
+		echo "ERROR: please specify 'SD_DEV', e.g. SD_DEV=/dev/mmcblk..."; exit 1; \
+	fi
+	$(SUDO) dd if="$(DISKIMG_OUT_SD)" of="$(SD_DEV)" status=progress
 

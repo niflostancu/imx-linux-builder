@@ -19,6 +19,9 @@ $(blank)
 endef
 comma := ,
 dollar := $$
+space := $(blank) $(blank)
+
+strip-spaces = $(subst ${space},${blank},$(1))
 
 normalize_id=$(subst -,_,$1)
 

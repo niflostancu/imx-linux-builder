@@ -31,3 +31,7 @@ IMX_MKIMAGE_MK_TARGET ?= flash_evk
 KERNEL_DEFCONFIG ?= defconfig
 #KERNEL_DTS ?= DEFINED_BY_BOARD
 
+# Boot record for SD/eMMC is at 32KB offset (from Reference Manual)
+# in 512B sectors, this is:
+DISKIMG_BOOT_SECTOR_SD ?= 64
+DISKIMG_BOOT_SECTOR_EMMC ?= $(DISKIMG_BOOT_SECTOR_SD)
