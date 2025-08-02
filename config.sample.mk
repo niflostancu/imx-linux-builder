@@ -32,4 +32,5 @@
 
 # Image options
 #DISKIMG_SIZE_SD = 512M
+#DISKIMG_PART2_COPY_ROOTFS = 1
 

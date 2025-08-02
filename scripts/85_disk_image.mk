@@ -18,6 +18,8 @@ DISKIMG_UBOOT_ENV_EMMC ?=
 # boot image offset (in 512B sectors) to be written at
 DISKIMG_BOOT_SECTOR_SD ?= 2
 DISKIMG_BOOT_SECTOR_EMMC ?= $(DISKIMG_BOOT_SECTOR_SD)
+# rootfs options
+DISKIMG_PART2_COPY_ROOTFS ?=
 
 # Temporary mountpoint to use
 DISKIMG_TMP_MOUNTPOINT ?= /tmp/mnt
@@ -38,6 +40,7 @@ $(call disk_lodev_attach,$(_DSKIMG_OUT))
 MNT=$(DISKIMG_TMP_MOUNTPOINT)
 mkdir -p "$$MNT"
 $(_DSKIMG_SCR_PART1)
+$(if $(DISKIMG_PART2_COPY_ROOTFS),$(_DSKIMG_SCR_PART2))
 $(_DSKIMG_SCR_WRITE_BOOT)
 # END disk image script!
 $(disk_lodev_cleanup)
@@ -48,6 +51,14 @@ $(MKFS_FAT32) $${LOOP_DEV}p1
 $(MOUNT) "$${LOOP_DEV}p1" $$MNT
 $(SUDO) cp "$(LINUX_UIMAGE_OUT)" $$MNT/
 echo "$$$(_DSKIMG_UBOOT_ENV_VAR)" | $(SUDO) tee $$MNT/uboot.env
+ls -lh $$MNT
+$(UMOUNT) $$MNT
+endef
+# inner script: second (rootfs) partition
+define _DSKIMG_SCR_PART2 ?=
+$(MKFS_EXT4) $${LOOP_DEV}p2
+$(MOUNT) "$${LOOP_DEV}p2" $$MNT
+$(SUDO) tar xf "$(BUILDROOT_OUT_TAR)" -S -C $$MNT/
 ls -lh $$MNT
 $(UMOUNT) $$MNT
 endef

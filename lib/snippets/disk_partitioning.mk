@@ -27,6 +27,7 @@ PART_FDISK_2P_BOOT_256 = $(call strip-spaces, \
 # macro to create an empty disk image
 # usage: $(call disk_image_create,$(DISK_IMAGE_SIZE),$(DISK_IMAGE_OUT))
 define disk_image_create=
+$(SUDO) rm -f $(2)
 truncate --size $(1) $(2)
 endef
 
