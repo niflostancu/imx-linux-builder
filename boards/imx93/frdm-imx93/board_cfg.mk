@@ -28,7 +28,7 @@ endif
 UBOOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/uboot/overrides.config
 UBOOT_DEFAULT_ENV_FILE ?= $(MK_BOARD_SRC)/uboot/default.env
 
-# Use Linux mainline
+# Uses Linux mainline, so no need to override anything (except dts ofc)
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx93-11x11-evk.dts
 
 # Use the Linux FIT image generator snippet
@@ -41,8 +41,14 @@ GEN_LINUX_FIT_INITRD_LOAD ?= 0x90000000
 BUILDROOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/buildroot/default.config
 # Disk image configuration: 2 parts
 DISKIMG_PART_SCHEME ?= FDISK
-DISKIMG_SIZE_SD ?= 512M
+DISKIMG_SIZE_SD ?= 1024M
 DISKIMG_PART_SCRIPT_SD ?= $(PART_FDISK_2P_BOOT_128)
+# only for ROOTFS on part 2: edit kernel bootargs
+ifneq ("$(GEN_LINUX_FIT_INITRD_ENABLED)","1")
+define DISKIMG_UBOOT_ENV_EMMC=
+bootargs=console=ttyLP0,115200 earlycon,115200 root=/dev/mmcblk0p2 clk_ignore_unused
+endef
+endif
 
 # Load SoC defaults
 MK_SOC_DIR := $(MK_FRAMEWORK_LIB)/soc/$(IMX_SOC)
