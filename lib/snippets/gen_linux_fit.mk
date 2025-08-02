@@ -48,7 +48,7 @@ define _gen_linux_fit_tpl=
             type = "flat_dt";
             arch = "$(GEN_LINUX_FIT_ARCH)";
             compression = "none";
-            load = <$(GEN_LINUX_FIT_FDT)>;
+            load = <$(GEN_LINUX_FIT_FDT_LOAD)>;
         };
         $(if $(GEN_LINUX_FIT_INITRD_ENABLED),$(_gen_linux_fit_initrd_tpl))
     };
