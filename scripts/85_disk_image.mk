@@ -50,7 +50,8 @@ define _DSKIMG_SCR_PART1 ?=
 $(MKFS_FAT32) $${LOOP_DEV}p1
 $(MOUNT) "$${LOOP_DEV}p1" $$MNT
 $(SUDO) cp "$(LINUX_UIMAGE_OUT)" $$MNT/
-echo "$$$(_DSKIMG_UBOOT_ENV_VAR)" | $(SUDO) tee $$MNT/uboot.env
+echo "$$$(_DSKIMG_UBOOT_ENV_VAR)" | $(SUDO) tee $$MNT/uboot.txt
+echo "$$$(_DSKIMG_UBOOT_ENV_VAR)" | $(SUDO) $(call uboot_mk_env_stdin,$$MNT/uboot.env) 
 ls -lh $$MNT
 $(UMOUNT) $$MNT
 endef

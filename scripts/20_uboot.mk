@@ -38,6 +38,11 @@ UBOOT_OUT_BIN = $(UBOOT_DEST)/u-boot.bin
 UBOOT_OUT_NODTB_BIN = $(UBOOT_DEST)/u-boot-nodtb.bin
 UBOOT_OUT_BIN_IMG = $(UBOOT_DEST)/u-boot.img
 UBOOT_MKIMAGE_BIN = $(UBOOT_DEST)/tools/mkimage
+UBOOT_MKENVIMAGE_BIN = $(UBOOT_DEST)/tools/mkenvimage
+
+# macro-command to compile a u-boot env as binary
+uboot_mk_env_stdin = $(UBOOT_MKENVIMAGE_BIN) -s 0x4000 -o $(1) -
+uboot_mk_env_txt = $(UBOOT_MKENVIMAGE_BIN) -s 0x4000 -o $(2) $(1)
 
 _UBOOT_GEN_DEPS = $(UBOOT_OUT_SPL_BIN) $(UBOOT_OUT_BIN_IMG) \
 				   $(UBOOT_OUT_NODTB_BIN) $(UBOOT_OUT_BIN) $(UBOOT_DTB_FULL) \
