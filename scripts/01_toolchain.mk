@@ -1,11 +1,15 @@
 ## Default toolchain detection / configuration
 
+# alias for CROSS_COMPILE=...
+_XC_ARG ?=
+
 # Toolchain path
 ifneq ("$(USE_NATIVE_COMPILER)","")
+$(info Using native compiler (no CROSS_COMPILE))
+else
 ifeq ("$(CROSS_COMPILE)","")
 AARCH64_TOOLCHAIN = $(firstword $(wildcard $(shell pwd)/toolchains/*aarch64-none-linux-gnu*/))
 CROSS_COMPILE := $(AARCH64_TOOLCHAIN)bin/aarch64-none-linux-gnu-
-endif
 endif
 ifeq ($(TOOLCHAIN_ARM32),1)
 CROSS_COMPILE := $(CROSS_COMPILE_ARM32)
@@ -16,4 +20,4 @@ endif
 # this can be used as argument to each make invocation
 _XC_ARG = CROSS_COMPILE=$(CROSS_COMPILE)
 $(info Using $(_XC_ARG))
-
+endif
