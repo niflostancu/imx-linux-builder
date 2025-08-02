@@ -30,8 +30,13 @@ _KERNEL_BUILD_DEPS += $(_KERNEL_CONFIG) $(KERNEL_APPLY_PATCHES)
 
 
 .PHONY: linux linux_clean linux_config linux_dtb
-linux: $(KERNEL_DEST)/.git
+linux:
 	$(MAKE_FORCED) $(KERNEL_OUT_IMAGE)
+$(KERNEL_OUT_IMAGE): $(_KERNEL_BUILD_DEPS) $(_FORCE) | $(KERNEL_DEST)/.git
+	# patch linux kernel (optional)
+	$(foreach patchfile,$(KERNEL_APPLY_PATCHES),\
+		$(call mk_apply_patch,$(patchfile),$(KERNEL_DEST)))
+	$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)"
 
 _KERNEL_CLONE_ARGS ?= $(if $(KERNEL_GIT_SHALLOW),--depth=1)
 $(KERNEL_DEST)/.git:
@@ -43,18 +48,15 @@ $(_KERNEL_CONFIG):
 	$(if $(KERNEL_CONFIG_FRAGMENTS), \
 		$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)" \
 			olddefconfig $(KERNEL_CONFIG_FRAGMENTS) )
-
+.PHONY: linux_menuconfig
 linux_menuconfig: $(_KERNEL_CONFIG)
 	$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)" menuconfig
 
-$(KERNEL_OUT_IMAGE): $(_KERNEL_BUILD_DEPS) $(_FORCE)
-	# patch linux kernel (optional)
-	$(foreach patchfile,$(KERNEL_APPLY_PATCHES),\
-		$(call mk_apply_patch,$(patchfile),$(KERNEL_DEST)))
-	$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)"
-
-# installs modules to the given path (usually, a buildroot overlay)
+# installs modules to the INSTALL_MOD_PATH (useable as buildroot overlay)
+.PHONY: linux_modules
 linux_modules:
+	$(MAKE_FORCED) $(KERNEL_MODULES_INSTALL)/
+$(KERNEL_MODULES_INSTALL)/: $(KERNEL_OUT_IMAGE) $(_FORCE)
 	mkdir -p "$(KERNEL_MODULES_INSTALL)"
 	$(MAKE) $(KERNEL_MAKE_ARGS) INSTALL_MOD_PATH="$(KERNEL_MODULES_INSTALL)" \
 		-C "$(KERNEL_DEST)" modules modules_install
