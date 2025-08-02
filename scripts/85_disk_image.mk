@@ -80,12 +80,12 @@ $(DISKIMG_OUT_SD): $(LINUX_UIMAGE_OUT) $(IMX_OUT_FLASH_BIN) \
 		$(_FORCE) | $(STAGING_DEST)/
 	bash -x -c "$$_DSKIMG_SH_SCRIPT_FULL_SD_"
 # export some makefile vars for bash usage:
-export _DSKIMG_SH_SCRIPT_FULL_SD_=$(let img_type,SD,$(DISKIMG_SCR_FULL))
-export _DSKIMG_SH_SCRIPT_FULL_EMMC_=$(let img_type,EMMC,$(DISKIMG_SCR_FULL))
-export _DSKIMG_PART_SCRIPT_SD_=$(let img_type,SD,$(DISKIMG_PART_SCRIPT_SD))
-export _DSKIMG_PART_SCRIPT_EMMC_=$(let img_type,EMMC,$(DISKIMG_PART_SCRIPT_EMMC))
-export _DSKIMG_UBOOT_ENV_SD_=$(let img_type,SD,$(DISKIMG_UBOOT_ENV_SD))
-export _DSKIMG_UBOOT_ENV_EMMC_=$(let img_type,EMMC,$(DISKIMG_UBOOT_ENV_EMMC))
+export _DSKIMG_SH_SCRIPT_FULL_SD_=$(foreach img_type,SD,$(DISKIMG_SCR_FULL))
+export _DSKIMG_SH_SCRIPT_FULL_EMMC_=$(foreach img_type,EMMC,$(DISKIMG_SCR_FULL))
+export _DSKIMG_PART_SCRIPT_SD_=$(foreach img_type,SD,$(DISKIMG_PART_SCRIPT_SD))
+export _DSKIMG_PART_SCRIPT_EMMC_=$(foreach img_type,EMMC,$(DISKIMG_PART_SCRIPT_EMMC))
+export _DSKIMG_UBOOT_ENV_SD_=$(foreach img_type,SD,$(DISKIMG_UBOOT_ENV_SD))
+export _DSKIMG_UBOOT_ENV_EMMC_=$(foreach img_type,EMMC,$(DISKIMG_UBOOT_ENV_EMMC))
 
 .PHONY: uuu_emmc
 uuu_emmc: $(DISKIMG_OUT_EMMC) | $(UUU)
