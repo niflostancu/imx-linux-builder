@@ -39,6 +39,10 @@ GEN_LINUX_FIT_INITRD_LOAD ?= 0x90000000
 
 # Buildroot config
 BUILDROOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/buildroot/default.config
+# Disk image configuration: 2 parts
+DISKIMG_PART_SCHEME ?= FDISK
+DISKIMG_SIZE_SD ?= 512M
+DISKIMG_PART_SCRIPT_SD ?= $(PART_FDISK_2P_BOOT_128)
 
 # Load SoC defaults
 MK_SOC_DIR := $(MK_FRAMEWORK_LIB)/soc/$(IMX_SOC)

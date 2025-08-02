@@ -4,8 +4,8 @@
 include $(MK_FRAMEWORK_LIB)/snippets/disk_partitioning.mk
 
 # EMMC & SD card image default configs
-DISKIMG_OUT_SD = $(BUILD_DEST)/emmc.img
-DISKIMG_OUT_EMMC = $(BUILD_DEST)/sdcard.img
+DISKIMG_OUT_SD = $(BUILD_DEST)/sdcard.img
+DISKIMG_OUT_EMMC = $(BUILD_DEST)/emmc.img
 DISKIMG_SIZE_SD ?= 128M
 DISKIMG_SIZE_EMMC ?= $(DISKIMG_SIZE_SD)
 # Partitioning scheme to use
@@ -38,6 +38,7 @@ $(call disk_lodev_attach,$(_DSKIMG_OUT))
 MNT=$(DISKIMG_TMP_MOUNTPOINT)
 mkdir -p "$$MNT"
 $(_DSKIMG_SCR_PART1)
+$(_DSKIMG_SCR_WRITE_BOOT)
 # END disk image script!
 $(disk_lodev_cleanup)
 endef
@@ -48,9 +49,10 @@ $(MOUNT) "$${LOOP_DEV}p1" $$MNT
 $(SUDO) cp "$(LINUX_UIMAGE_OUT)" $$MNT/
 echo "$$$(_DSKIMG_UBOOT_ENV_VAR)" | $(SUDO) tee $$MNT/uboot.env
 ls -lh $$MNT
+$(UMOUNT) $$MNT
 endef
-define _DSKIMG_WRITE_BOOT_SCRIPT ?=
-dd if="$(IMX_OUT_FLASH_BIN)" of="$$LOOP_DEV" bs=512 seek=$(_DSKIMG_BOOT_SECTOR)
+define _DSKIMG_SCR_WRITE_BOOT ?=
+$(DD) if="$(IMX_OUT_FLASH_BIN)" of="$$LOOP_DEV" bs=512 seek=$(_DSKIMG_BOOT_SECTOR)
 endef
 
 # SD & eMMC card image targets

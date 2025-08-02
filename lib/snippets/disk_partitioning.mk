@@ -5,6 +5,7 @@ SUDO ?= sudo
 LOSETUP ?= $(SUDO) losetup
 MOUNT ?= $(SUDO) mount
 UMOUNT ?= $(SUDO) umount
+DD ?= $(SUDO) dd
 MKFS_FAT32 ?= $(SUDO) mkfs.fat -F 32
 MKFS_EXT4 ?= $(SUDO) mkfs.ext4
 

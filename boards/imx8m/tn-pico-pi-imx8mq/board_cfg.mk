@@ -48,8 +48,10 @@ BUILDROOT_EXTRA_CONFIG_FILES += \
 		$(if $(OPTEE_ENABLED),$(MK_BOARD_SRC)/buildroot/optee.config)
 
 # Image options
-EMMC_IMAGE_SIZE = 256M
-define EMMC_UBOOT_ENV=
+DISKIMG_PART_SCHEME ?= FDISK
+DISKIMG_SIZE_SD ?= 512M
+DISKIMG_PART_SCRIPT_SD ?= $(PART_FDISK_2P_BOOT_128)
+define DISKIMG_UBOOT_ENV_EMMC=
 bootargs=console=ttymxc0,115200 init=/sbin/init
 loadaddr=0x70000000
 mmcboot=echo Booting...; load mmc 0:1 $${loadaddr} linux.itb; bootm $${loadaddr}
