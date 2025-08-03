@@ -30,7 +30,7 @@ _KERNEL_BUILD_DEPS += $(_KERNEL_CONFIG) $(KERNEL_APPLY_PATCHES)
 
 
 .PHONY: linux linux_clean linux_config linux_dtb
-linux:
+linux: | $(KERNEL_DEST)/.git
 	$(MAKE_FORCED) $(KERNEL_OUT_IMAGE)
 $(KERNEL_OUT_IMAGE): $(_KERNEL_BUILD_DEPS) $(_FORCE) | $(KERNEL_DEST)/.git
 	# patch linux kernel (optional)
@@ -43,7 +43,7 @@ $(KERNEL_DEST)/.git:
 	$(call mk_git_clone,$(KERNEL_GIT_URL),$(KERNEL_DEST),$(KERNEL_GIT_BRANCH),$(_KERNEL_CLONE_ARGS))
 
 # Kernel configuration / menuconfig rules
-$(_KERNEL_CONFIG):
+$(_KERNEL_CONFIG): | $(KERNEL_DEST)/.git
 	$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)" $(KERNEL_DEFCONFIG)
 	$(if $(KERNEL_CONFIG_FRAGMENTS), \
 		$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)" \
@@ -56,7 +56,7 @@ linux_menuconfig: $(_KERNEL_CONFIG)
 .PHONY: linux_modules
 linux_modules:
 	$(MAKE_FORCED) $(KERNEL_MODULES_INSTALL)/
-$(KERNEL_MODULES_INSTALL)/: $(KERNEL_OUT_IMAGE) $(_FORCE)
+$(KERNEL_MODULES_INSTALL)/: $(KERNEL_OUT_IMAGE) $(_FORCE) | $(KERNEL_DEST)/.git
 	mkdir -p "$(KERNEL_MODULES_INSTALL)"
 	$(MAKE) $(KERNEL_MAKE_ARGS) INSTALL_MOD_PATH="$(KERNEL_MODULES_INSTALL)" \
 		-C "$(KERNEL_DEST)" modules modules_install
