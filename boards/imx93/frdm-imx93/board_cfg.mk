@@ -39,6 +39,7 @@ GEN_LINUX_FIT_INITRD_LOAD ?= 0x90000000
 
 # Buildroot config
 BUILDROOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/buildroot/default.config
+
 # Disk image configuration: 2 parts
 DISKIMG_PART_SCHEME ?= FDISK
 DISKIMG_SIZE_SD ?= 1024M
