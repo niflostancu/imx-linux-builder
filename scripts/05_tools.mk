@@ -5,6 +5,7 @@ MFGTOOLS_DEST ?= $(BUILD_DEST)/tools/mfgtools
 MFGTOOLS_GIT_URL ?= https://github.com/nxp-imx/mfgtools
 MFGTOOLS_UUU = $(MFGTOOLS_DEST)/build/uuu/uuu
 UUU ?= $(MFGTOOLS_UUU)
+UUU_CMD ?= $(if $(AS_SUDO),sudo )$(UUU) $(if $(V),-V)
 
 .PHONY: mfgtools_build mfgtools_clean
 mfgtools_build: $(MFGTOOLS_UUU)

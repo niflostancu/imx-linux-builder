@@ -70,5 +70,5 @@ clean_all: imx_mkimage_clean
 # iMX SPL image bootloader upload target 
 .PHONY: uuu_spl
 uuu_spl: $(UUU)
-	$(if $(AS_SUDO),sudo )$(UUU) $(if $(V),-V) -b spl $(IMX_OUT_FLASH_BIN)
+	$(UUU_CMD) -b spl $(IMX_OUT_FLASH_BIN)
 

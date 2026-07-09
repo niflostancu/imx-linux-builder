@@ -89,7 +89,7 @@ export _DSKIMG_UBOOT_ENV_EMMC_=$(foreach img_type,EMMC,$(DISKIMG_UBOOT_ENV_EMMC)
 
 .PHONY: uuu_emmc
 uuu_emmc: $(DISKIMG_OUT_EMMC) | $(UUU)
-	$(UUU) -b emmc_all $(IMX_OUT_FLASH_BIN) $(DISKIMG_OUT_EMMC)
+	$(UUU_CMD) -b emmc_all $(IMX_OUT_FLASH_BIN) $(DISKIMG_OUT_EMMC)
 
 .PHONY: dd_sd
 SD_DEV ?= 
