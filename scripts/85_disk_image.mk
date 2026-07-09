@@ -64,7 +64,7 @@ ls -lh $$MNT
 $(UMOUNT) $$MNT
 endef
 define _DSKIMG_SCR_WRITE_BOOT ?=
-$(DD) if="$(IMX_OUT_FLASH_BIN)" of="$$LOOP_DEV" bs=512 seek=$(_DSKIMG_BOOT_SECTOR)
+$(DD) if="$(IMX_OUT_FLASH_BIN)" of="$$LOOP_DEV" bs=512 seek=$(_DSKIMG_BOOT_SECTOR) conv=notrunc,fsync
 endef
 
 # SD & eMMC card image targets

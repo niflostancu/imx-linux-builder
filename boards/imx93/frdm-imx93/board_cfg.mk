@@ -2,11 +2,15 @@
 
 IMX_SOC = imx93
 ATF_PLATFORM ?= imx93
+OPTEE_PLATFORM ?= imx-mx93evk
 IMX_MKIMAGE_SOC ?= iMX93
 
 UBOOT_APPLY_PATCHES ?=
 # Set to 1 inside your config to use u-boot mainline
 UBOOT_MAINLINE ?=
+
+IMX_FW_URL = https://www.nxp.com/lgfiles/NMG/MAD/YOCTO/firmware-imx-8.28-994fa14.bin
+IMX_FW_VER = 8.28-994fa14
 
 ifeq ("$(UBOOT_MAINLINE)","1")
 UBOOT_DEFCONFIG ?= imx93_frdm_defconfig
@@ -28,22 +32,37 @@ endif
 UBOOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/uboot/overrides.config
 UBOOT_DEFAULT_ENV_FILE ?= $(MK_BOARD_SRC)/uboot/default.env
 
+# Enable OP-TEE?
+OPTEE_ENABLED ?=
+# Memory configuration
+TRUSTED_UART_BASE ?= 0x44380000
+# allocate 32MB for TZDRAM, then 4MB for shared memory at the end of DRAM
+OPTEE_TZDRAM_ADDR ?= 0xedc00000
+OPTEE_TZDRAM_SIZE ?= 0x02000000
+OPTEE_SHMEM_ADDR ?= 0xefc00000
+OPTEE_SHMEM_SIZE ?= 0x00400000
+OPTEE_TOTAL_SIZE ?= 0x02400000
+OPTEE_DDR_SIZE = 0x80000000
+OPTEE_MAKE_FLAGS_EXTRA ?= CFG_WITH_SOFTWARE_PRNG=y CFG_IMX_ELE=n
+
 # Uses Linux mainline, so no need to override anything (except dts ofc)
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx93-11x11-evk.dts
 
 # Use the Linux FIT image generator snippet
 #GEN_LINUX_FIT_INITRD_ENABLED ?= 1
 GEN_LINUX_FIT_KERNEL_LOAD ?= 0x81000000
-GEN_LINUX_FIT_FDT_LOAD ?= 0x8E000000
-GEN_LINUX_FIT_INITRD_LOAD ?= 0x90000000
+GEN_LINUX_FIT_FDT_LOAD ?= 0x85000000
+GEN_LINUX_FIT_INITRD_LOAD ?= 0x85100000
 
 # Buildroot config
 BUILDROOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/buildroot/default.config
+BUILDROOT_EXTRA_CONFIG_FILES += \
+		$(if $(OPTEE_ENABLED),$(MK_BOARD_SRC)/buildroot/optee.config)
 
 # Disk image configuration: 2 parts
 DISKIMG_PART_SCHEME ?= FDISK
 DISKIMG_SIZE_SD ?= 1024M
-DISKIMG_PART_SCRIPT_SD ?= $(PART_FDISK_2P_BOOT_128)
+DISKIMG_PART_SCRIPT_SD ?= $(PART_FDISK_1P_BOOT_FULL)
 # only for ROOTFS on part 2: edit kernel bootargs
 ifneq ("$(GEN_LINUX_FIT_INITRD_ENABLED)","1")
 define DISKIMG_UBOOT_ENV_EMMC=
