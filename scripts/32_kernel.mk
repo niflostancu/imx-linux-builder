@@ -27,7 +27,10 @@ KERNEL_MODULES_INSTALL=$(BUILD_DEST)/linux-modules-overlay
 _KERNEL_CONFIG = $(KERNEL_DEST)/.config
 _KERNEL_BUILD_DEPS ?=
 _KERNEL_BUILD_DEPS += $(_KERNEL_CONFIG) $(KERNEL_APPLY_PATCHES)
-
+# copy fragments to arch config dir & use relative paths for deps
+_KERNEL_CFG_DIR := $(KERNEL_DEST)/arch/$(KERNEL_ARCH)/configs
+_KERNEL_CFG_FRAGS := $(patsubst %,$(_KERNEL_CFG_DIR)/%,$(notdir $(KERNEL_CONFIG_FRAGMENTS)))
+_KERNEL_CFG_FRAGS_REL := $(notdir $(_KERNEL_CFG_FRAGS))
 
 .PHONY: linux linux_clean linux_config linux_dtb
 linux: | $(KERNEL_DEST)/.git
@@ -42,12 +45,19 @@ _KERNEL_CLONE_ARGS ?= $(if $(KERNEL_GIT_SHALLOW),--depth=1)
 $(KERNEL_DEST)/.git:
 	$(call mk_git_clone,$(KERNEL_GIT_URL),$(KERNEL_DEST),$(KERNEL_GIT_BRANCH),$(_KERNEL_CLONE_ARGS))
 
-# Kernel configuration / menuconfig rules
-$(_KERNEL_CONFIG): | $(KERNEL_DEST)/.git
+# Kernel configuration rules
+$(_KERNEL_CONFIG): $(_KERNEL_CFG_FRAGS) | $(KERNEL_DEST)/.git
 	$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)" $(KERNEL_DEFCONFIG)
 	$(if $(KERNEL_CONFIG_FRAGMENTS), \
 		$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)" \
-			olddefconfig $(KERNEL_CONFIG_FRAGMENTS) )
+			olddefconfig $(_KERNEL_CFG_FRAGS_REL) )
+# must copy KERNEL_CONFIG_FRAGMENTS to kernel dest
+define _kernel_copy_frag_rule
+$(_KERNEL_CFG_DIR)/$(notdir $(1)): $(1) | $(KERNEL_DEST)/.git
+	cp -f $$< $$@
+endef
+$(foreach _frag,$(KERNEL_CONFIG_FRAGMENTS),$(eval $(call _kernel_copy_frag_rule,$(_frag))))
+
 .PHONY: linux_menuconfig
 linux_menuconfig: $(_KERNEL_CONFIG)
 	$(MAKE) $(KERNEL_MAKE_ARGS) -C "$(KERNEL_DEST)" menuconfig
