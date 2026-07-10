@@ -29,7 +29,8 @@ IMX_OUT_FLASH_BIN ?= $(IMX_MKIMAGE_OUT_FLASH_BIN)
 IMX_MKIMAGE_MK_TARGET ?= flash_singleboot
 endif
 
-UBOOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/uboot/overrides.config
+UBOOT_EXTRA_CONFIG_FILES ?= $(MK_BOARD_SRC)/uboot/overrides.config \
+							$(MK_BOARD_SRC)/uboot/usb-gadget.config
 UBOOT_DEFAULT_ENV_FILE ?= $(MK_BOARD_SRC)/uboot/default.env
 
 # Enable OP-TEE?
