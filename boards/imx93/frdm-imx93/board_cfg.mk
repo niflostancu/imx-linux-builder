@@ -48,6 +48,8 @@ OPTEE_MAKE_FLAGS_EXTRA ?= CFG_WITH_SOFTWARE_PRNG=y CFG_IMX_ELE=n
 
 # Uses Linux mainline, so no need to override anything (except dts ofc)
 KERNEL_DTS ?= arch/$(SOC_ARCH)/boot/dts/freescale/imx93-11x11-evk.dts
+# use recent kernel (for NPU accel support)
+KERNEL_GIT_BRANCH ?= v7.1
 
 # Use the Linux FIT image generator snippet
 #GEN_LINUX_FIT_INITRD_ENABLED ?= 1
