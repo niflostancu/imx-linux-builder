@@ -23,7 +23,7 @@ UBOOT_GIT_URL ?= https://github.com/nxp-imx/uboot-imx.git
 UBOOT_GIT_BRANCH ?= lf_v2026.04
 # finally, support added in time for v2026.04
 UBOOT_DEFCONFIG ?= imx93_11x11_frdm_defconfig
-UBOOT_DEVICE_TREE ?= freescale/imx93-11x11-frdm
+UBOOT_DEVICE_TREE ?= imx93-11x11-frdm
 # we need to use the dreadful imx-mkimage...
 IMX_OUT_FLASH_BIN ?= $(IMX_MKIMAGE_OUT_FLASH_BIN)
 IMX_MKIMAGE_MK_TARGET ?= flash_singleboot
